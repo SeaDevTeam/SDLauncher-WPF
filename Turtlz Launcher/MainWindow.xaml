@@ -7,7 +7,6 @@
         mc:Ignorable="d"
         Title="Emerald Launcher" Height="450" Width="800"
         xmlns:ui="http://schemas.modernwpf.com/2019"
-        Loaded="Window_Loaded"
         ui:WindowHelper.UseModernWindowStyle="True">
     <Grid>
         <StackPanel VerticalAlignment="Stretch" HorizontalAlignment="Stretch">

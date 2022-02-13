@@ -14,6 +14,8 @@ using ModernWpf.Controls;
 using CmlLib.Core.Auth;
 using System.Threading;
 using System.Net;
+using CmlLib.Core.Auth.Microsoft.UI.Wpf;
+
 namespace Turtlz_Launcher
 {
     /// <summary>
@@ -256,6 +258,28 @@ namespace Turtlz_Launcher
             {
                 return false;
             }
+        }
+
+        private void btnMSLogin_Click(object sender, RoutedEventArgs e)
+        {
+            MicrosoftLoginWindow loginWindow = new MicrosoftLoginWindow();
+            loginWindow.Title = "Login with Microsoft Account";
+            MSession session = loginWindow.ShowLoginDialog();
+            if (session != null)
+            {
+                MessageBox.Show("Login success : " + session.Username);
+                UpdateSession(session);
+            }
+            else
+            {
+                MessageBox.Show("Failed to login");
+            }
+        }
+
+        private void btnMSLogout_Click(object sender, RoutedEventArgs e)
+        {
+            MicrosoftLoginWindow loginWindow = new MicrosoftLoginWindow();
+            loginWindow.ShowLogoutDialog();
         }
     }
 }

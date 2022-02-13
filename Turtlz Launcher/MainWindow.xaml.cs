@@ -37,6 +37,7 @@ namespace Turtlz_Launcher
             logindialog.IsPrimaryButtonEnabled = false;
             logindialog.IsSecondaryButtonEnabled = false;
             logindialog.ShowAsync();
+            Window_Loaded();
         }
 
         CMLauncher launcher;
@@ -46,9 +47,8 @@ namespace Turtlz_Launcher
 
         GameLog logPage;
 
-        private async void Window_Loaded(object sender, RoutedEventArgs e)
+        private async void Window_Loaded()
         {
-
             var defaultpath = new MinecraftPath(MinecraftPath.GetOSDefaultPath());
             await initializeLauncher(defaultpath);
         }
@@ -262,6 +262,11 @@ namespace Turtlz_Launcher
             dia.ShowAsync();
             await initializeLauncher(dia.minecraftPath);
             dia = null;
+        }
+
+        private void Window_Loaded_1(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

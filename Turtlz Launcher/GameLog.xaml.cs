@@ -12,6 +12,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Collections.Concurrent;
 using ModernWpf.Controls;
+using System.Windows.Threading;
 namespace Turtlz_Launcher
 {
     /// <summary>
@@ -19,9 +20,15 @@ namespace Turtlz_Launcher
     /// </summary>
     public partial class GameLog : ContentDialog
     {
+
+        DispatcherTimer timer;
         public GameLog()
         {
             InitializeComponent();
+            timer = new DispatcherTimer();
+            timer.Tick += Timer1_Tick;
+            timer.Interval = new TimeSpan(0, 0, 0, 0, 10);
+            timer.Start();
         }
 
 
@@ -32,7 +39,7 @@ namespace Turtlz_Launcher
             logQueue.Enqueue(msg);
         }
 
-        private void timer1_Tick(object sender, EventArgs e)
+        private void Timer1_Tick(object sender, EventArgs e)
         {
             string msg;
             while (logQueue.TryDequeue(out msg))

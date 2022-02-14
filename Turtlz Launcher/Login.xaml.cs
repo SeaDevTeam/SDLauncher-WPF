@@ -90,7 +90,14 @@ namespace Turtlz_Launcher
 
         private void btnOfflineLog_Click(object sender, RoutedEventArgs e)
         {
-            UpdateSession(MSession.GetOfflineSession(txtbxOffUsername.Text));
+            if (!string.IsNullOrEmpty(txtbxOffUsername.Text))
+            {
+                UpdateSession(MSession.GetOfflineSession(txtbxOffUsername.Text));
+            }
+            else
+            {
+                MessageBox.Show("Enter a username");
+            }
         }
         private void MenuItem_Click(object sender, RoutedEventArgs e)
         {

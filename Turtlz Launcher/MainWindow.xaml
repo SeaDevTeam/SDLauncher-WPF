@@ -5,40 +5,123 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Turtlz_Launcher"
         mc:Ignorable="d"
+        Loaded="Window_Loaded"
+        xmlns:fw="clr-namespace:SourceChord.FluentWPF;assembly=FluentWPF"
+        xmlns:wf="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms"
         Title="Emerald Launcher" Height="450" Width="800"
         xmlns:ui="http://schemas.modernwpf.com/2019"
-        ui:WindowHelper.UseModernWindowStyle="True">
+        Closing="OnClose"
+        IsVisibleChanged="OnIsVisibleChanged"
+        xmlns:wv2="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
+        ui:WindowHelper.UseModernWindowStyle="True" WindowStartupLocation="CenterScreen">
+    <Window.Resources>
+        <LinearGradientBrush x:Key="btnBackground" EndPoint="0.5,1" StartPoint="0.5,0">
+            <GradientStop Color="#FF26BB0E" Offset="0.508"/>
+            <GradientStop Color="#FF11782D" Offset="0.988"/>
+            <GradientStop Color="#FF2B931B" Offset="0.256"/>
+            <GradientStop Color="#FF117A2B" Offset="1"/>
+        </LinearGradientBrush>
+    </Window.Resources>
     <Grid>
-        <StackPanel VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Text="Ram:"/>
-                <ui:NumberBox Minimum="1024" x:Name="txtbxRam" Text="1024"/>
-            </StackPanel>
-            <CheckBox Content="Skip asset download" x:Name="cbSkipAssetsDownload"/>
-            <CheckBox Content="Skip hash check" x:Name="cbSkipHashCheck"/>
-            <StackPanel Orientation="Horizontal">
-            <TextBox IsEnabled="False" Name="txtMCPath"/>
-                <Button Content="Change" x:Name="btnChangeMCpath" Click="btnChangeMCpath_Click"/>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal">
-                <TextBlock FontSize="14" VerticalAlignment="Center" Text="version"/>
-                <ComboBox x:Name="cmbxVer"/>
-                <Button Margin="5,0,5,0" Name="btnSetLastVersion" Click="btnSetLastVersion_Click" Content="Latest Version"/>
-                <Button x:Name="btnLaunch" Click="btnLaunch_Click" Style="{StaticResource AccentButtonStyle}" FontSize="14" FontWeight="SemiBold" Content="Launch"/>
-            </StackPanel>
-            <Grid Margin="10" HorizontalAlignment="Stretch" VerticalAlignment="Bottom">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition />
-                <RowDefinition  />
-                <RowDefinition Height="*" />
-            </Grid.RowDefinitions>
-            <TextBlock x:Name="status" Grid.Row="0" Grid.Column="0" Margin="0,0,0,5" Text="Ready"/>
-                <ui:ProgressBar x:Name="Pb_File" Margin="0,0,0,5" HorizontalAlignment="Stretch" Grid.Row="1" Grid.Column="0" Height="15" />
-            <ui:ProgressBar x:Name="Pb_Progress" HorizontalAlignment="Stretch" Grid.Row="2" Grid.Column="0" Height="15"/>
-        </Grid>
-        </StackPanel>
+        <ui:SplitView PanePlacement="Right" IsPaneOpen="True">
+            <ui:SplitView.Pane>
+                <Grid Background="{fw:AcrylicBrush TargetName=Grid, TintOpacity=0.8, TintColor=#1E1E1E}"  >
+                    <StackPanel Margin="10" VerticalAlignment="Top" Orientation="Horizontal">
+                        <ui:SymbolIcon Symbol="Setting" VerticalAlignment="Center" />
+                        <TextBlock Text="Settings" VerticalAlignment="Center" x:Name="PaneHeader" Margin="5,0,0,0" FontSize="20" FontWeight="SemiBold"/>
+                    </StackPanel>
+                </Grid>
+            </ui:SplitView.Pane>
+            <Grid>
+                <StackPanel VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Max Ram:"/>
+                        <ui:NumberBox Minimum="1024" x:Name="txtbxMaxRam" Text="1024"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Min Ram:"/>
+                        <ui:NumberBox x:Name="txtbxMinRam" Text="1024"/>
+                    </StackPanel>
+                    <CheckBox Content="Skip asset download" x:Name="cbSkipAssetsDownload"/>
+                    <CheckBox Content="Skip hash check" x:Name="cbSkipHashCheck"/>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBox IsEnabled="False" Name="txtMCPath"/>
+                        <Button Background="{DynamicResource btnBackground}" Content="Change" x:Name="btnChangeMCpath" Click="btnChangeMCpath_Click"/>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Visibility="Collapsed"  FontSize="14" VerticalAlignment="Center" Text="version"/>
+                        <ComboBox Visibility="Collapsed" x:Name="cmbxVer"/>
+
+                        <ui:DropDownButton Background="{DynamicResource btnBackground}" x:Name="btnMCVer" Content="Version">
+                           
+                            <ui:DropDownButton.Flyout>
+                                <ui:MenuFlyout>
+                                    <ui:MenuFlyout.MenuFlyoutPresenterStyle>
+                                        <Style TargetType="ui:MenuFlyoutPresenter">
+                                            <Setter Property="Background" Value="{DynamicResource btnBackground}"/>
+                                        </Style>
+                                    </ui:MenuFlyout.MenuFlyoutPresenterStyle>
+                                    <MenuItem Click="MenuItem_Click" x:Name="mLatest" Header="Latest"/>
+                                    <MenuItem Click="MenuItem_Click" x:Name="mLatestsnap" Header="Latest Snapshot"/>
+                                    <MenuItem Header="1.18">
+                                        <MenuItem  Click="MenuItem_Click" Header="1.18"/>
+                                        <MenuItem Click="MenuItem_Click"  Header="1.18.1"/>
+                                    </MenuItem>
+                                    <MenuItem Header="1.17">
+                                        <MenuItem Click="MenuItem_Click"  Header="1.17"/>
+                                        <MenuItem Header="1.17.1">
+                                            <MenuItem Click="MenuItem_Click"  Header="1.17.1"/>
+                                            <MenuItem Click="MenuItem_Click"  Header="ForgeOptiFine 1.17.1"/>
+                                            <MenuItem Click="MenuItem_Click"  Header="OptiFine 1.17.1"/>
+                                        </MenuItem>
+                                    </MenuItem>
+                                    <MenuItem Header="1.16">
+                                        <MenuItem Click="MenuItem_Click"  Header="1.16"/>
+                                        <MenuItem Click="MenuItem_Click"  Header="1.16.1"/>
+                                        <MenuItem Click="MenuItem_Click"  Header="1.16.5"/>
+                                        <MenuItem Click="MenuItem_Click"  Header="OptiFine 1.16.5"/>
+                                    </MenuItem>
+                                    <MenuItem Header="1.12">
+                                        <MenuItem Click="MenuItem_Click"  Header="1.12"/>
+                                        <MenuItem Click="MenuItem_Click"  Header="1.12.1"/>
+                                    </MenuItem>
+                                    <MenuItem Click="MenuItem_Click"  Header="1.8.9"/>
+                                    <MenuItem Click="MenuItem_Click" Header="1.7"/>
+                                </ui:MenuFlyout>
+                            </ui:DropDownButton.Flyout>
+                        </ui:DropDownButton>
+                        <Button x:Name="btnLaunch" Click="btnLaunch_Click" FontSize="14" FontWeight="SemiBold" Content="Launch">
+                            <Button.Background>
+                                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                                    <GradientStop Color="#FF041666"/>
+                                    <GradientStop Color="#FF2D4CE6" Offset="0.477"/>
+                                    <GradientStop Color="#FF0A195D" Offset="0.981"/>
+                                    <GradientStop Color="#FF2744D6" Offset="0.391"/>
+                                    <GradientStop Color="#FF1835C9" Offset="0.55"/>
+                                </LinearGradientBrush>
+                            </Button.Background>
+                        </Button>
+                    </StackPanel>
+
+                </StackPanel>
+                <DockPanel DockPanel.Dock="Bottom" Margin="0,334,0,0">
+                    <Grid Margin="10" HorizontalAlignment="Stretch" VerticalAlignment="Bottom">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition  />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <TextBlock x:Name="status" Grid.Row="0" Grid.Column="0" Margin="0,0,0,5" Text="Ready"/>
+                        <ui:ProgressBar x:Name="Pb_File" Margin="0,0,0,5" HorizontalAlignment="Stretch" Grid.Row="1" Grid.Column="0" Height="15" />
+                        <ui:ProgressBar x:Name="Pb_Progress" HorizontalAlignment="Stretch" Grid.Row="2" Grid.Column="0" Height="15"/>
+                    </Grid>
+                </DockPanel>
+            </Grid>
+        </ui:SplitView>
+        
     </Grid>
 </Window>

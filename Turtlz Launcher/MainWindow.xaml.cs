@@ -30,6 +30,14 @@ namespace Turtlz_Launcher
     /// </summary>
     public partial class MainWindow : Window
     {
+        System.Windows.Threading.DispatcherTimer timer;
+        CMLauncher launcher;
+        readonly MSession session;
+        MinecraftPath gamepath;
+        string javapath;
+        public static bool isGameRuns;
+        private System.Windows.Forms.NotifyIcon m_notifyIcon;
+        GameLog logPage;
         public MainWindow()
         {
             InitializeComponent();
@@ -37,20 +45,54 @@ namespace Turtlz_Launcher
             logindialog.IsPrimaryButtonEnabled = false;
             logindialog.IsSecondaryButtonEnabled = false;
             logindialog.ShowAsync();
-            Window_Loaded();
+            timer = new System.Windows.Threading.DispatcherTimer();
+            timer.Tick += Timer1_Tick;
+            timer.Interval = new TimeSpan(0, 0, 0, 0, 10);
+            timer.Start();
+            m_notifyIcon = new System.Windows.Forms.NotifyIcon();
+            m_notifyIcon.BalloonTipText = "Click to show";
+            m_notifyIcon.BalloonTipTitle = "Emarld Launcher";
+            m_notifyIcon.Text = "Emarld Launcher";
+            m_notifyIcon.Icon = new System.Drawing.Icon("pngwing.com.ico");
+            m_notifyIcon.Click += new EventHandler(m_notifyIcon_Click);
+        }
+        private void Timer1_Tick(object sender, EventArgs e)
+        { 
+            if(isGameRuns == true)
+            {
+                btnLaunch.IsEnabled = false;
+            }
+            else
+            {
+                btnLaunch.IsEnabled = true;
+            }
         }
 
-        CMLauncher launcher;
-        readonly MSession session;
-        MinecraftPath gamepath;
-        string javapath;
-
-        GameLog logPage;
-
-        private async void Window_Loaded()
+            private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
             var defaultpath = new MinecraftPath(MinecraftPath.GetOSDefaultPath());
             await initializeLauncher(defaultpath);
+            var computerMemory = Util.GetMemoryMb();
+            if (computerMemory == null)
+            {
+                MessageBox.Show("Failed to get computer memory");
+                return;
+            }
+
+            var max = computerMemory / 3;
+            if (max < 1024)
+            {
+                max = 1024;
+            }
+            else if (max > 8192)
+            {
+                max = 8192;
+            }
+
+            var min = max / 10;
+
+            txtbxMaxRam.Text = max.ToString();
+            txtbxMinRam.Text = min.ToString();
         }
         // Event Handler. Show download progress
         private void Launcher_ProgressChanged(object sender, ProgressChangedEventArgs e)
@@ -87,14 +129,21 @@ namespace Turtlz_Launcher
             foreach (var item in versions)
             {
                 if (showVersion != null && item.Name == showVersion)
+                {
                     showVersionExist = true;
+                }
+
                 cmbxVer.Items.Add(item.Name);
             }
 
             if (showVersion == null || !showVersionExist)
+            {
                 btnSetLastVersion_Click(null, null);
+            }
             else
+            {
                 cmbxVer.Text = showVersion;
+            }
         }
         private async void btnLaunch_Click(object sender, RoutedEventArgs e)
         {
@@ -108,7 +157,7 @@ namespace Turtlz_Launcher
                 return;
             }
 
-            if (cmbxVer.SelectedItem == null)
+            if (btnMCVer.Content.ToString() == "Version")
             {
                 MessageBox.Show("Select Version");
                 return;
@@ -118,7 +167,7 @@ namespace Turtlz_Launcher
                 // create LaunchOption
                 var launchOption = new MLaunchOption()
                 {
-                    MaximumRamMb = int.Parse(txtbxRam.Text),
+                    MaximumRamMb = int.Parse(txtbxMaxRam.Text),
                     Session = vars.session,
 
                     VersionType = "",
@@ -128,7 +177,7 @@ namespace Turtlz_Launcher
                     FullScreen = false,
 
                     ServerIp = "",
-                    MinimumRamMb = 256,
+                    MinimumRamMb = int.Parse(txtbxMaxRam.Text),
                     DockName = "",
                     DockIcon = ""
                 };
@@ -170,7 +219,7 @@ namespace Turtlz_Launcher
                 if (launcher.GameFileCheckers.LibraryFileChecker != null)
                     launcher.GameFileCheckers.LibraryFileChecker.CheckHash = !cbSkipHashCheck.IsChecked == true;
 
-                var process = await launcher.CreateProcessAsync(cmbxVer.Text, launchOption); // Create Arguments and Process
+                var process = await launcher.CreateProcessAsync(btnMCVer.Content.ToString(), launchOption); // Create Arguments and Process
 
                 // process.Start(); // Just start game, or
                 StartProcess(process); // Start Process with debug options
@@ -198,7 +247,7 @@ namespace Turtlz_Launcher
             }
             finally
             {
-                // re open log form
+                // re open log page
                 if (logPage != null)
                     logPage.Hide();
 
@@ -218,7 +267,7 @@ namespace Turtlz_Launcher
         {
             File.WriteAllText("launcher.txt", process.StartInfo.Arguments);
             output(process.StartInfo.Arguments);
-
+            
             // process options to display game log
 
             process.StartInfo.UseShellExecute = false;
@@ -231,6 +280,27 @@ namespace Turtlz_Launcher
             process.Start();
             process.BeginErrorReadLine();
             process.BeginOutputReadLine();
+            isGameRuns = true;
+            Hide();
+            if (m_notifyIcon != null)
+            {
+                m_notifyIcon.ShowBalloonTip(2000);
+            }
+
+            var th = new System.Threading.Thread(() =>
+            {
+                process.WaitForExit();
+                this.Dispatcher.Invoke(
+                        System.Windows.Threading.DispatcherPriority.Normal,
+                        new Action(
+                        delegate ()
+                        {
+                            ShowWindow();
+                            isGameRuns = false;
+                        }
+                        ));
+            });
+            th.Start();
         }
 
         private void Process_OutputDataReceived(object sender, DataReceivedEventArgs e)
@@ -259,14 +329,70 @@ namespace Turtlz_Launcher
             var dia = new GamePathPage(gamepath);
             dia.IsPrimaryButtonEnabled = false;
             dia.IsSecondaryButtonEnabled = false;
-            dia.ShowAsync();
+            await dia.ShowAsync();
             await initializeLauncher(dia.minecraftPath);
             dia = null;
         }
 
-        private void Window_Loaded_1(object sender, RoutedEventArgs e)
+        private void VerMenuItem_ClickEx(MenuItem item)
         {
-
+            if (item.Header.ToString() == "Latest")
+            {
+                btnMCVer.Content = launcher.Versions?.LatestReleaseVersion?.Name;
+                return;
+            }
+            else if(item.Header.ToString() == "Latest Snapshot")
+            {
+                btnMCVer.Content = launcher.Versions?.LatestSnapshotVersion?.Name;
+                return;
+            }
+            else
+            {
+                btnMCVer.Content = item.Header;
+            }
         }
+
+        private void MenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            if(sender is MenuItem m)
+            {
+                VerMenuItem_ClickEx(m);
+            }
+        }
+
+
+        void OnClose(object sender, CancelEventArgs args)
+        {
+            m_notifyIcon.Dispose();
+            m_notifyIcon = null;
+        }
+
+        private WindowState m_storedWindowState = WindowState.Normal;
+        void OnIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs args)
+        {
+            CheckTrayIcon();
+        }
+
+        void m_notifyIcon_Click(object sender, EventArgs e)
+        {
+            ShowWindow();
+        }
+        void CheckTrayIcon()
+        {
+            ShowTrayIcon(!IsVisible);
+        }
+        public void ShowWindow()
+        {
+            Show();
+            WindowState = m_storedWindowState;
+        }
+        void ShowTrayIcon(bool show)
+        {
+            if (m_notifyIcon != null)
+                m_notifyIcon.Visible = show;
+        }
+
+
+
     }
 }

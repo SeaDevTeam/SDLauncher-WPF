@@ -53,6 +53,7 @@ namespace Turtlz_Launcher
         }
         void apply(MinecraftPath path)
         {
+            txtMCpath.Text = path.BasePath;
             minecraftPath = path;
 
         }

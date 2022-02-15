@@ -53,7 +53,7 @@
                 </StackPanel>
             </DockPanel>
         </Grid>
-        <ui:SplitView Grid.Row="1" PanePlacement="Right" Name="SettingsPane">
+        <ui:SplitView Grid.Row="1" PanePlacement="Right" IsPaneOpen="True" Name="SettingsPane">
             <ui:SplitView.Pane>
                 <Grid Background="{fw:AcrylicBrush TargetName=Grid, TintOpacity=0.8, TintColor=#1E1E1E}"  >
                     <StackPanel Margin="10">
@@ -71,6 +71,7 @@
                                     <TextBox Width="200" IsEnabled="True" IsReadOnly="True" Name="txtMCPath"/>
                                     <Button Margin="5,0,0,0" Background="{DynamicResource btnBackground}" Content="Change" x:Name="btnChangeMCpath" Click="btnChangeMCpath_Click"/>
                                 </StackPanel>
+                                <ui:ToggleSwitch Header="Use advanced versions selector" x:Name="swtchVer"/>
                             </StackPanel>
                         </Border>
                         <TextBlock Margin="0,10,0,5" Text="Download Settings" FontSize="15" FontWeight="SemiBold"/>
@@ -85,65 +86,65 @@
             </ui:SplitView.Pane>
             <Grid>
                 <StackPanel VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
-                    <TextBlock x:Name="lblWelcome" FontSize="35" Text="Welcome!" FontFamily="pack://application:,,,/Fonts/#Pixeboy" />
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Visibility="Collapsed"  FontSize="14" VerticalAlignment="Center" Text="version"/>
-                        <ComboBox Visibility="Collapsed" x:Name="cmbxVer"/>
-
-                        <ui:DropDownButton Background="{DynamicResource btnBackground}" x:Name="btnMCVer" Content="Version">
-
-                            <ui:DropDownButton.Flyout>
-                                <ui:MenuFlyout>
-                                    <ui:MenuFlyout.MenuFlyoutPresenterStyle>
-                                        <Style TargetType="ui:MenuFlyoutPresenter">
-                                            <Setter Property="Background" Value="{DynamicResource btnBackground}"/>
-                                        </Style>
-                                    </ui:MenuFlyout.MenuFlyoutPresenterStyle>
-                                    <MenuItem Click="MenuItem_Click" x:Name="mLatest" Header="Latest"/>
-                                    <MenuItem Click="MenuItem_Click" x:Name="mLatestsnap" Header="Latest Snapshot"/>
-                                    <MenuItem Header="1.18">
-                                        <MenuItem  Click="MenuItem_Click" Header="1.18"/>
-                                        <MenuItem Click="MenuItem_Click"  Header="1.18.1"/>
-                                    </MenuItem>
-                                    <MenuItem Header="1.17">
-                                        <MenuItem Click="MenuItem_Click"  Header="1.17"/>
-                                        <MenuItem Header="1.17.1">
-                                            <MenuItem Click="MenuItem_Click"  Header="1.17.1"/>
-                                            <MenuItem Click="MenuItem_Click"  Header="ForgeOptiFine 1.17.1"/>
-                                            <MenuItem Click="MenuItem_Click"  Header="OptiFine 1.17.1"/>
-                                        </MenuItem>
-                                    </MenuItem>
-                                    <MenuItem Header="1.16">
-                                        <MenuItem Click="MenuItem_Click"  Header="1.16"/>
-                                        <MenuItem Click="MenuItem_Click"  Header="1.16.1"/>
-                                        <MenuItem Click="MenuItem_Click"  Header="1.16.5"/>
-                                        <MenuItem Click="MenuItem_Click"  Header="OptiFine 1.16.5"/>
-                                    </MenuItem>
-                                    <MenuItem Header="1.12">
-                                        <MenuItem Click="MenuItem_Click"  Header="1.12"/>
-                                        <MenuItem Click="MenuItem_Click"  Header="1.12.1"/>
-                                    </MenuItem>
-                                    <MenuItem Click="MenuItem_Click"  Header="1.8.9"/>
-                                    <MenuItem Click="MenuItem_Click" Header="1.7"/>
-                                </ui:MenuFlyout>
-                            </ui:DropDownButton.Flyout>
-                        </ui:DropDownButton>
-                        <Button x:Name="btnLaunch" Click="btnLaunch_Click" FontSize="14" FontWeight="SemiBold" Content="Launch">
-                            <Button.Background>
-                                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                                    <GradientStop Color="#FF041666"/>
-                                    <GradientStop Color="#FF2D4CE6" Offset="0.477"/>
-                                    <GradientStop Color="#FF0A195D" Offset="0.981"/>
-                                    <GradientStop Color="#FF2744D6" Offset="0.391"/>
-                                    <GradientStop Color="#FF1835C9" Offset="0.55"/>
-                                </LinearGradientBrush>
-                            </Button.Background>
-
-                        </Button>
-                    </StackPanel>
-
+                    <TextBlock Margin="10" x:Name="lblWelcome" FontSize="35" Text="Welcome!" FontFamily="pack://application:,,,/Fonts/#Pixeboy" />
                 </StackPanel>
-                <DockPanel DockPanel.Dock="Bottom" Margin="0,334,0,0">
+                <StackPanel VerticalAlignment="Bottom" Margin="5,0,5,75" HorizontalAlignment="Right" Orientation="Horizontal">
+                    <StackPanel Orientation="Horizontal"  Margin="0,0,5,0" Name="pnlAdVer" Visibility="Collapsed" >
+                        <TextBlock FontSize="14" VerticalAlignment="Center" Text="version"/>
+                        <ComboBox x:Name="cmbxVer"/>
+                    </StackPanel>
+                    <ui:DropDownButton Margin="0,0,5,0" Background="{DynamicResource btnBackground}" x:Name="btnMCVer" Content="Version">
+
+                        <ui:DropDownButton.Flyout>
+                            <ui:MenuFlyout>
+                                <ui:MenuFlyout.MenuFlyoutPresenterStyle>
+                                    <Style TargetType="ui:MenuFlyoutPresenter">
+                                        <Setter Property="Background" Value="{DynamicResource btnBackground}"/>
+                                    </Style>
+                                </ui:MenuFlyout.MenuFlyoutPresenterStyle>
+                                <MenuItem Click="MenuItem_Click" x:Name="mLatest" Header="Latest"/>
+                                <MenuItem Click="MenuItem_Click" x:Name="mLatestsnap" Header="Latest Snapshot"/>
+                                <MenuItem Header="1.18">
+                                    <MenuItem  Click="MenuItem_Click" Header="1.18"/>
+                                    <MenuItem Click="MenuItem_Click"  Header="1.18.1"/>
+                                </MenuItem>
+                                <MenuItem Header="1.17">
+                                    <MenuItem Click="MenuItem_Click"  Header="1.17"/>
+                                    <MenuItem Header="1.17.1">
+                                        <MenuItem Click="MenuItem_Click"  Header="1.17.1"/>
+                                        <MenuItem Click="MenuItem_Click"  Header="ForgeOptiFine 1.17.1"/>
+                                        <MenuItem Click="MenuItem_Click"  Header="OptiFine 1.17.1"/>
+                                    </MenuItem>
+                                </MenuItem>
+                                <MenuItem Header="1.16">
+                                    <MenuItem Click="MenuItem_Click"  Header="1.16"/>
+                                    <MenuItem Click="MenuItem_Click"  Header="1.16.1"/>
+                                    <MenuItem Click="MenuItem_Click"  Header="1.16.5"/>
+                                    <MenuItem Click="MenuItem_Click"  Header="OptiFine 1.16.5"/>
+                                </MenuItem>
+                                <MenuItem Header="1.12">
+                                    <MenuItem Click="MenuItem_Click"  Header="1.12"/>
+                                    <MenuItem Click="MenuItem_Click"  Header="1.12.1"/>
+                                </MenuItem>
+                                <MenuItem Click="MenuItem_Click"  Header="1.8.9"/>
+                                <MenuItem Click="MenuItem_Click" Header="1.7"/>
+                            </ui:MenuFlyout>
+                        </ui:DropDownButton.Flyout>
+                    </ui:DropDownButton>
+                    <Button x:Name="btnLaunch" Click="btnLaunch_Click" FontSize="14" FontWeight="SemiBold" Content="Launch">
+                        <Button.Background>
+                            <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                                <GradientStop Color="#FF041666"/>
+                                <GradientStop Color="#FF2D4CE6" Offset="0.477"/>
+                                <GradientStop Color="#FF0A195D" Offset="0.981"/>
+                                <GradientStop Color="#FF2744D6" Offset="0.391"/>
+                                <GradientStop Color="#FF1835C9" Offset="0.55"/>
+                            </LinearGradientBrush>
+                        </Button.Background>
+
+                    </Button>
+                </StackPanel>
+                <DockPanel DockPanel.Dock="Bottom" Margin="0,469,0,0">
                     <Grid Margin="10" HorizontalAlignment="Stretch" VerticalAlignment="Bottom">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition/>

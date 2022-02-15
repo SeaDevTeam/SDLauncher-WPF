@@ -21,6 +21,7 @@ using CmlLib.Core.Downloader;
 using System.Diagnostics;
 using CmlLib.Core.Installer;
 using CmlLib.Core.Files;
+using CmlLib.Utils;
 using System.IO;
 
 namespace Turtlz_Launcher
@@ -38,7 +39,9 @@ namespace Turtlz_Launcher
         public static bool isGameRuns;
         private System.Windows.Forms.NotifyIcon m_notifyIcon;
         GameLog logPage;
+        public static string currentVer;
         int minRam;
+        int VerSelectAdvaced;
         public MainWindow()
         {
             InitializeComponent();
@@ -87,6 +90,18 @@ namespace Turtlz_Launcher
                 prfPic.DisplayName = "";
                 txtlogin.Text = "Login";
 
+            }
+            if (swtchVer.IsOn)
+            {
+                pnlAdVer.Visibility = Visibility.Visible;
+                VerSelectAdvaced = 1;
+                btnMCVer.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                VerSelectAdvaced = 0;
+                pnlAdVer.Visibility = Visibility.Collapsed;
+                btnMCVer.Visibility = Visibility.Visible;
             }
         }
 
@@ -178,6 +193,7 @@ namespace Turtlz_Launcher
         }
         private async void btnLaunch_Click(object sender, RoutedEventArgs e)
         {
+            string MCver = "";
             if (vars.session == null)
             {
                 MessageBox.Show("Login First");
@@ -187,11 +203,30 @@ namespace Turtlz_Launcher
                 logindialog.ShowAsync();
                 return;
             }
-
-            if (btnMCVer.Content.ToString() == "Version")
+            if (VerSelectAdvaced == 0)
             {
-                MessageBox.Show("Select Version");
-                return;
+                if (btnMCVer.Content.ToString() == "Version")
+                {
+                    MessageBox.Show("Select Version");
+                    return;
+                }
+                else
+                {
+                    MCver = btnMCVer.Content.ToString();
+                }
+            }
+            else if (VerSelectAdvaced == 1)
+            {
+                if (string.IsNullOrEmpty(cmbxVer.Text.ToString()))
+                {
+                    MessageBox.Show("Select Version");
+                    return;
+                }
+                else
+                {
+                    MCver = cmbxVer.Text.ToString();
+                }
+
             }
             UI(false);
             try
@@ -250,9 +285,9 @@ namespace Turtlz_Launcher
                     launcher.GameFileCheckers.ClientFileChecker.CheckHash = !cbSkipHashCheck.IsChecked == true;
                 if (launcher.GameFileCheckers.LibraryFileChecker != null)
                     launcher.GameFileCheckers.LibraryFileChecker.CheckHash = !cbSkipHashCheck.IsChecked == true;
-
-                var process = await launcher.CreateProcessAsync(btnMCVer.Content.ToString(), launchOption); // Create Arguments and Process
-
+                currentVer = MCver;
+                var process = await launcher.CreateProcessAsync(MCver.ToString(), launchOption); // Create Arguments and Process
+                
                 // process.Start(); // Just start game, or
                 StartProcess(process); // Start Process with debug options
             }
@@ -356,10 +391,11 @@ namespace Turtlz_Launcher
             cmbxVer.Text = launcher.Versions?.LatestReleaseVersion?.Name;
 
         }
-        void apply(MinecraftPath path)
+        async void apply(MinecraftPath path)
         {
             txtMCPath.Text = path.BasePath;
             gamepath = path;
+            await initializeLauncher(path);
 
         }
 
@@ -376,12 +412,6 @@ namespace Turtlz_Launcher
                 };
                 apply(mc);
             }
-            var dia = new GamePathPage(gamepath);
-            dia.IsPrimaryButtonEnabled = false;
-            dia.IsSecondaryButtonEnabled = false;
-            await dia.ShowAsync();
-            await initializeLauncher(dia.minecraftPath);
-            dia = null;
         }
 
         private void VerMenuItem_ClickEx(MenuItem item)
@@ -413,8 +443,19 @@ namespace Turtlz_Launcher
 
         void OnClose(object sender, CancelEventArgs args)
         {
-            m_notifyIcon.Dispose();
-            m_notifyIcon = null;
+            if (isGameRuns)
+            {
+               var result = MessageBox.Show("Minecraft version:" + currentVer + " is running/launching, Do you really want to close?", "Info", MessageBoxButton.YesNo, MessageBoxImage.Information);
+                if(result == MessageBoxResult.Yes)
+                {
+                    m_notifyIcon.Dispose();
+                    m_notifyIcon = null;
+                }
+                else
+                {
+                    args.Cancel = true;
+                }
+            }
         }
 
         private WindowState m_storedWindowState = WindowState.Normal;

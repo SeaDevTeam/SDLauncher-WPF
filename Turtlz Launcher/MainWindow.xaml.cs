@@ -30,7 +30,7 @@ namespace Turtlz_Launcher
     /// </summary>
     public partial class MainWindow : Window
     {
-        System.Windows.Threading.DispatcherTimer timer;
+        public static System.Windows.Threading.DispatcherTimer timer;
         CMLauncher launcher;
         readonly MSession session;
         MinecraftPath gamepath;
@@ -38,6 +38,7 @@ namespace Turtlz_Launcher
         public static bool isGameRuns;
         private System.Windows.Forms.NotifyIcon m_notifyIcon;
         GameLog logPage;
+        int minRam;
         public MainWindow()
         {
             InitializeComponent();
@@ -57,7 +58,8 @@ namespace Turtlz_Launcher
             m_notifyIcon.Click += new EventHandler(m_notifyIcon_Click);
         }
         private void Timer1_Tick(object sender, EventArgs e)
-        { 
+        {
+            lblRam.Text = "Ram: " + ((int)sliderRAM.Value).ToString();
             if(isGameRuns == true)
             {
                 btnLaunch.IsEnabled = false;
@@ -66,10 +68,32 @@ namespace Turtlz_Launcher
             {
                 btnLaunch.IsEnabled = true;
             }
+            if(vars.session != null)
+            {
+                try
+                {
+                    lblWelcome.Text = "Weclome! " + vars.UserName;
+                    prfPic.DisplayName = vars.UserName;
+                    txtlogin.Text = vars.UserName;
+                }
+                catch (Exception ex)
+                {
+
+                }
+            }
+            else
+            {
+                lblWelcome.Text = "Weclome!";
+                prfPic.DisplayName = "";
+                txtlogin.Text = "Login";
+
+            }
         }
 
-            private async void Window_Loaded(object sender, RoutedEventArgs e)
+        private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            UI(false);
+            status.Text = "Intializing RAM";
             var defaultpath = new MinecraftPath(MinecraftPath.GetOSDefaultPath());
             await initializeLauncher(defaultpath);
             var computerMemory = Util.GetMemoryMb();
@@ -79,10 +103,14 @@ namespace Turtlz_Launcher
                 return;
             }
 
-            var max = computerMemory / 3;
+            var max = computerMemory / 2.5;
             if (max < 1024)
             {
                 max = 1024;
+            }
+            else if (max > 4096 && max < 4500)
+            {
+                max = 4096;
             }
             else if (max > 8192)
             {
@@ -90,9 +118,12 @@ namespace Turtlz_Launcher
             }
 
             var min = max / 10;
-
-            txtbxMaxRam.Text = max.ToString();
-            txtbxMinRam.Text = min.ToString();
+            minRam = (int)min;
+            sliderRAM.Minimum = (long)(max / 7);
+            sliderRAM.Maximum = (long)max;
+            sliderRAM.Value = (long)(max / 2);
+            status.Text = "Ready";
+            UI(true);
         }
         // Event Handler. Show download progress
         private void Launcher_ProgressChanged(object sender, ProgressChangedEventArgs e)
@@ -162,12 +193,13 @@ namespace Turtlz_Launcher
                 MessageBox.Show("Select Version");
                 return;
             }
+            UI(false);
             try
             {
                 // create LaunchOption
                 var launchOption = new MLaunchOption()
                 {
-                    MaximumRamMb = int.Parse(txtbxMaxRam.Text),
+                    MaximumRamMb = (int)sliderRAM.Value,
                     Session = vars.session,
 
                     VersionType = "",
@@ -177,7 +209,7 @@ namespace Turtlz_Launcher
                     FullScreen = false,
 
                     ServerIp = "",
-                    MinimumRamMb = int.Parse(txtbxMaxRam.Text),
+                    MinimumRamMb = minRam,
                     DockName = "",
                     DockIcon = ""
                 };
@@ -261,6 +293,7 @@ namespace Turtlz_Launcher
         private void UI(bool value)
         {
             cmbxVer.IsEnabled = value;
+            btnMCVer.IsEnabled = value;
             btnLaunch.IsEnabled = value;
         }
         private void StartProcess(Process process)
@@ -323,9 +356,26 @@ namespace Turtlz_Launcher
             cmbxVer.Text = launcher.Versions?.LatestReleaseVersion?.Name;
 
         }
+        void apply(MinecraftPath path)
+        {
+            txtMCPath.Text = path.BasePath;
+            gamepath = path;
+
+        }
 
         private async void btnChangeMCpath_Click(object sender, RoutedEventArgs e)
         {
+            System.Windows.Forms.FolderBrowserDialog folderdia = new System.Windows.Forms.FolderBrowserDialog();
+            folderdia.SelectedPath = gamepath.ToString();
+            if(folderdia.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                var mc = new MinecraftPath(folderdia.SelectedPath.ToString())
+                {
+                    Runtime = gamepath.Runtime,
+                    Assets = System.IO.Path.Combine(MinecraftPath.GetOSDefaultPath(), "assets")
+                };
+                apply(mc);
+            }
             var dia = new GamePathPage(gamepath);
             dia.IsPrimaryButtonEnabled = false;
             dia.IsSecondaryButtonEnabled = false;
@@ -392,7 +442,17 @@ namespace Turtlz_Launcher
                 m_notifyIcon.Visible = show;
         }
 
+        private void TitleBarButton_Click(object sender, RoutedEventArgs e)
+        {
+            SettingsPane.IsPaneOpen = !SettingsPane.IsPaneOpen;
+        }
 
-
+        private void TitleBarButton_Click_1(object sender, RoutedEventArgs e)
+        {
+            var logindialog = new Login();
+            logindialog.IsPrimaryButtonEnabled = false;
+            logindialog.IsSecondaryButtonEnabled = false;
+            logindialog.ShowAsync();
+        }
     }
 }

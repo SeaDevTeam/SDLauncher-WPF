@@ -7,5 +7,6 @@ namespace Turtlz_Launcher
     public class vars
     {
         public static MSession session;
+        public static string UserName;
     }
 }

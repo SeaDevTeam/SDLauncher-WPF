@@ -27,7 +27,6 @@ namespace Turtlz_Launcher
         {
             InitializeComponent();
 
-
         }
         MLogin login = new MLogin();
         public static string mail;
@@ -245,6 +244,7 @@ namespace Turtlz_Launcher
         {
             // Success to login!
             vars.session = session;
+            vars.UserName = session.Username.ToString();
             this.Hide();
         }
         private bool CheckConnection(String URL)
@@ -271,6 +271,10 @@ namespace Turtlz_Launcher
         {
             MicrosoftLoginWindow loginWindow = new MicrosoftLoginWindow();
             loginWindow.Title = "Login with Microsoft Account";
+            loginWindow.Height = 800;
+            loginWindow.ShowInTaskbar = false;
+            loginWindow.WindowStyle = WindowStyle.ToolWindow; 
+            loginWindow.WindowStartupLocation = WindowStartupLocation.CenterScreen;
             MSession session = loginWindow.ShowLoginDialog();
             if (session != null)
             {
@@ -285,7 +289,13 @@ namespace Turtlz_Launcher
 
         private void btnMSLogout_Click(object sender, RoutedEventArgs e)
         {
+            
             MicrosoftLoginWindow loginWindow = new MicrosoftLoginWindow();
+            loginWindow.Height = 800;
+            loginWindow.ShowInTaskbar = false;
+            loginWindow.WindowStyle = WindowStyle.ToolWindow;
+            loginWindow.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+            loginWindow.Title = "Logout";
             loginWindow.ShowLogoutDialog();
         }
     }

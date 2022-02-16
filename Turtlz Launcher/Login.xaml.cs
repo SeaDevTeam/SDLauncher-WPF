@@ -267,11 +267,16 @@ namespace Turtlz_Launcher
             }
         }
 
+        
         private void btnMSLogin_Click(object sender, RoutedEventArgs e)
         {
             MicrosoftLoginWindow loginWindow = new MicrosoftLoginWindow();
             loginWindow.Title = "Login with Microsoft Account";
             loginWindow.Height = 800;
+            loginWindow.PreviewMouseRightButtonDown += Login_MouseRightButtonDown;
+            loginWindow.PreviewMouseRightButtonUp += Login_MouseRightButtonDown;
+            loginWindow.MouseRightButtonDown += Login_MouseRightButtonDown;
+            loginWindow.MouseRightButtonUp += Login_MouseRightButtonDown;
             loginWindow.ShowInTaskbar = false;
             loginWindow.WindowStyle = WindowStyle.ToolWindow; 
             loginWindow.WindowStartupLocation = WindowStartupLocation.CenterScreen;
@@ -298,5 +303,11 @@ namespace Turtlz_Launcher
             loginWindow.Title = "Logout";
             loginWindow.ShowLogoutDialog();
         }
+
+        private void Login_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            e.Handled = true;
+        }
+        
     }
 }

@@ -23,6 +23,17 @@ using CmlLib.Core.Installer;
 using CmlLib.Core.Files;
 using CmlLib.Utils;
 using System.IO;
+using DiscordRPC;
+using DiscordRPC.Logging;
+//using Discord;
+//using Discord.Net;
+//using Discord.Webhook;
+//using Discord.Rest;
+// Discord.WebSocket;
+// Discord.Audio;
+//using Discord.API;
+//using System.Web;
+//using Discord.Commands;
 
 namespace Turtlz_Launcher
 {
@@ -32,6 +43,7 @@ namespace Turtlz_Launcher
     public partial class MainWindow : Window
     {
         public static System.Windows.Threading.DispatcherTimer timer;
+        public static System.Windows.Threading.DispatcherTimer discordTimer;
         CMLauncher launcher;
         readonly MSession session;
         MinecraftPath gamepath;
@@ -42,6 +54,7 @@ namespace Turtlz_Launcher
         public static string currentVer;
         int minRam;
         int VerSelectAdvaced;
+        string DisToken;
         public MainWindow()
         {
             InitializeComponent();
@@ -53,6 +66,10 @@ namespace Turtlz_Launcher
             timer.Tick += Timer1_Tick;
             timer.Interval = new TimeSpan(0, 0, 0, 0, 10);
             timer.Start();
+            discordTimer = new System.Windows.Threading.DispatcherTimer();
+            discordTimer.Tick += RPCTick;
+            discordTimer.Interval = new TimeSpan(0, 0, 0, 0, 10);
+            discordTimer.Start();
             m_notifyIcon = new System.Windows.Forms.NotifyIcon();
             m_notifyIcon.BalloonTipText = "Click to show";
             m_notifyIcon.BalloonTipTitle = "Emarld Launcher";
@@ -60,10 +77,11 @@ namespace Turtlz_Launcher
             m_notifyIcon.Icon = new System.Drawing.Icon("pngwing.com.ico");
             m_notifyIcon.Click += new EventHandler(m_notifyIcon_Click);
         }
+
         private void Timer1_Tick(object sender, EventArgs e)
         {
             lblRam.Text = "Ram: " + ((int)sliderRAM.Value).ToString();
-            if(isGameRuns == true)
+            if (isGameRuns == true)
             {
                 btnLaunch.IsEnabled = false;
             }
@@ -71,7 +89,7 @@ namespace Turtlz_Launcher
             {
                 btnLaunch.IsEnabled = true;
             }
-            if(vars.session != null)
+            if (vars.session != null)
             {
                 try
                 {
@@ -253,25 +271,25 @@ namespace Turtlz_Launcher
                 {
                     launchOption.JavaPath = javapath;
                 }
-//                if (!string.IsNullOrEmpty(Txt_ServerPort.Text))
-  //                  launchOption.ServerPort = int.Parse(Txt_ServerPort.Text);
+                //                if (!string.IsNullOrEmpty(Txt_ServerPort.Text))
+                //                  launchOption.ServerPort = int.Parse(Txt_ServerPort.Text);
 
-          //      if (!string.IsNullOrEmpty(Txt_ScWd.Text) && !string.IsNullOrEmpty(Txt_ScHt.Text))
-            //    {
-              //      launchOption.ScreenHeight = int.Parse(Txt_ScHt.Text);
+                //      if (!string.IsNullOrEmpty(Txt_ScWd.Text) && !string.IsNullOrEmpty(Txt_ScHt.Text))
+                //    {
+                //      launchOption.ScreenHeight = int.Parse(Txt_ScHt.Text);
                 //    launchOption.ScreenWidth = int.Parse(Txt_ScWd.Text);
-          //      }
+                //      }
 
-            //    if (!string.IsNullOrEmpty(Txt_JavaArgs.Text))
-            //        launchOption.JVMArguments = Txt_JavaArgs.Text.Split(' ');
+                //    if (!string.IsNullOrEmpty(Txt_JavaArgs.Text))
+                //        launchOption.JVMArguments = Txt_JavaArgs.Text.Split(' ');
 
                 //if (rbParallelDownload.Checked)
-               // {
-                    System.Net.ServicePointManager.DefaultConnectionLimit = 256;
-                    launcher.FileDownloader = new AsyncParallelDownloader();
-               // }
-               // else
-               //     launcher.FileDownloader = new SequenceDownloader();
+                // {
+                System.Net.ServicePointManager.DefaultConnectionLimit = 256;
+                launcher.FileDownloader = new AsyncParallelDownloader();
+                // }
+                // else
+                //     launcher.FileDownloader = new SequenceDownloader();
 
                 if (cbSkipAssetsDownload.IsChecked == true)
                     launcher.GameFileCheckers.AssetFileChecker = null;
@@ -287,7 +305,7 @@ namespace Turtlz_Launcher
                     launcher.GameFileCheckers.LibraryFileChecker.CheckHash = !cbSkipHashCheck.IsChecked == true;
                 currentVer = MCver;
                 var process = await launcher.CreateProcessAsync(MCver.ToString(), launchOption); // Create Arguments and Process
-                
+
                 // process.Start(); // Just start game, or
                 StartProcess(process); // Start Process with debug options
             }
@@ -335,7 +353,7 @@ namespace Turtlz_Launcher
         {
             File.WriteAllText("launcher.txt", process.StartInfo.Arguments);
             output(process.StartInfo.Arguments);
-            
+
             // process options to display game log
 
             process.StartInfo.UseShellExecute = false;
@@ -403,7 +421,7 @@ namespace Turtlz_Launcher
         {
             System.Windows.Forms.FolderBrowserDialog folderdia = new System.Windows.Forms.FolderBrowserDialog();
             folderdia.SelectedPath = gamepath.ToString();
-            if(folderdia.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            if (folderdia.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
                 var mc = new MinecraftPath(folderdia.SelectedPath.ToString())
                 {
@@ -421,7 +439,7 @@ namespace Turtlz_Launcher
                 btnMCVer.Content = launcher.Versions?.LatestReleaseVersion?.Name;
                 return;
             }
-            else if(item.Header.ToString() == "Latest Snapshot")
+            else if (item.Header.ToString() == "Latest Snapshot")
             {
                 btnMCVer.Content = launcher.Versions?.LatestSnapshotVersion?.Name;
                 return;
@@ -434,27 +452,42 @@ namespace Turtlz_Launcher
 
         private void MenuItem_Click(object sender, RoutedEventArgs e)
         {
-            if(sender is MenuItem m)
+            if (sender is MenuItem m)
             {
                 VerMenuItem_ClickEx(m);
             }
         }
 
+        void SaveSettings()
+        {
+            //MCPath / RAM / DRPC / MCVer
+            string _File = txtMCPath.Text;
+            char Quote = Microsoft.VisualBasic.ControlChars.Quote;
+            StreamWriter writer;
+            writer = File.CreateText("appcache");
+            writer.Write(_File);
+            writer.Close();
 
+        }
         void OnClose(object sender, CancelEventArgs args)
         {
             if (isGameRuns)
             {
-               var result = MessageBox.Show("Minecraft version:" + currentVer + " is running/launching, Do you really want to close?", "Info", MessageBoxButton.YesNo, MessageBoxImage.Information);
-                if(result == MessageBoxResult.Yes)
+                var result = MessageBox.Show("Minecraft version:" + currentVer + " is running/launching, Do you really want to close?", "Info", MessageBoxButton.YesNo, MessageBoxImage.Information);
+                if (result == MessageBoxResult.Yes)
                 {
                     m_notifyIcon.Dispose();
                     m_notifyIcon = null;
+                    SaveSettings();
                 }
                 else
                 {
                     args.Cancel = true;
                 }
+            }
+            else
+            {
+                SaveSettings();
             }
         }
 
@@ -494,6 +527,111 @@ namespace Turtlz_Launcher
             logindialog.IsPrimaryButtonEnabled = false;
             logindialog.IsSecondaryButtonEnabled = false;
             logindialog.ShowAsync();
+        }
+
+        public DiscordRpcClient RPCclient;
+        public RichPresence presence = new RichPresence()
+        {
+            Assets = new Assets()
+            {
+                LargeImageKey = "minecraft",
+                LargeImageText = "Playing Minecraft",
+                SmallImageKey = "nobacklarge",
+                SmallImageText = "Emerald launcher"
+            }
+        };
+        void RPCInitialize()
+        {
+            RPCclient = new DiscordRpcClient("943158277678714900");
+            RPCclient.Logger = new ConsoleLogger() { Level = LogLevel.Warning };
+            RPCclient.OnReady += (sender, e) =>
+            {
+                MessageBox.Show("Received Ready from user "+ e.User.Username);
+            };
+
+            RPCclient.OnPresenceUpdate += (sender, e) =>
+            {
+                MessageBox.Show("Received Update!");
+            };
+
+            RPCclient.Initialize();
+            RPCclient.SetPresence(presence);
+            isRPCon = true;
+        }
+
+        bool isRPCon;
+        private void RPCTick(object sender, EventArgs e)
+        {
+            RichPresence tempPrec;
+            string MCver = "";
+            if (VerSelectAdvaced == 0)
+            {
+                if (btnMCVer.Content.ToString() == "Version")
+                {
+                    MCver = "";
+                }
+                else
+                {
+                    MCver = btnMCVer.Content.ToString();
+                }
+            }
+            else if (VerSelectAdvaced == 1)
+            {
+                if (string.IsNullOrEmpty(cmbxVer.Text.ToString()))
+                {
+                    MCver = "";
+                }
+                else
+                {
+                    MCver = cmbxVer.Text.ToString();
+                }
+
+            }
+            if (switchRPC.IsOn)
+            {
+                if (!isRPCon)
+                {
+                    RPCInitialize();
+                }
+            }
+            else
+            {
+                if (isRPCon)
+                {
+                    isRPCon = false;
+                    RPCclient.Dispose();
+                }
+            }
+            if (!isGameRuns)
+            {
+                tempPrec = new RichPresence()
+                {
+                    Details = MCver,
+                    State = "Going to start",
+                    Assets = new Assets()
+                    {
+                        LargeImageKey = "nobacklarge",
+                        LargeImageText = "Emerald launcher",
+                    }
+                };
+                presence = tempPrec;
+                RPCclient.SetPresence(presence);
+            }
+            if (!isGameRuns)
+            {
+                tempPrec = new RichPresence()
+                {
+                    Details = MCver,
+                    State = "Playing",
+                    Assets = new Assets()
+                    {
+                        LargeImageKey = "nobacklarge",
+                        LargeImageText = "Emerald launcher",
+                    }
+                };
+                presence = tempPrec;
+                RPCclient.SetPresence(presence);
+            }
         }
     }
 }

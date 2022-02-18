@@ -9,8 +9,8 @@
 	<AssemblyName>Emerald Launcher</AssemblyName>
     <ApplicationIcon>pngwing.com.ico</ApplicationIcon>
     <ApplicationManifest>app.manifest</ApplicationManifest>
-    <AssemblyVersion>0.1.0.0</AssemblyVersion>
-    <FileVersion>0.1.0.0</FileVersion>
+    <AssemblyVersion>0.2.6.0</AssemblyVersion>
+    <FileVersion>0.2.6.0</FileVersion>
     <Authors>Turtlz Dev Team</Authors>
     <Company>Turtlz Dev Team</Company>
     <Copyright>Copyright © 2021 Turtlz Dev Team</Copyright>
@@ -20,10 +20,13 @@
     <PackageReleaseNotes>Beta</PackageReleaseNotes>
     <Configurations>Debug;Release;Release x64</Configurations>
     <Platforms>AnyCPU;x64;x86</Platforms>
+    <Version>0.2.6.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="bg.jpg" />
     <None Remove="Fonts\Pixeboy.ttf" />
+    <None Remove="wallpaper.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -40,6 +43,7 @@
     <PackageReference Include="FluentWPF" Version="0.10.2" />
     <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.1108.44" />
     <PackageReference Include="ModernWpfUI" Version="0.9.4" />
+    <PackageReference Include="WPF-UI" Version="1.2.1" />
   </ItemGroup>
 
   <ItemGroup>
@@ -50,9 +54,26 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="bg.jpg" />
     <Resource Include="Fonts\Pixeboy.ttf">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="wallpaper.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Properties\Settings.Designer.cs">
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
   </ItemGroup>
 
 </Project>

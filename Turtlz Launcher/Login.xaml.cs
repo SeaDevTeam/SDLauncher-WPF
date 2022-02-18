@@ -102,9 +102,7 @@ namespace Turtlz_Launcher
         {
             mojang.IsEnabled = false;
             offline.IsEnabled = false;
-            if (CheckConnection("https://www.minecraft.net/"))
-            {
-                var th = new Thread(() =>
+            var th = new Thread(() =>
                 {
                     var result = login.TryAutoLogin();
 
@@ -152,22 +150,13 @@ namespace Turtlz_Launcher
                 });
                 th.Start();
 
-            }
-            else
-            {
-                MessageBox.Show("Failed to connect Minecraft.net");
-                mojang.IsEnabled = true;
-                offline.IsEnabled = true;
-            }
-
+            
         }
 
         private void MenuItem_Click_1(object sender, RoutedEventArgs e)
         {
             mojang.IsEnabled = false;
             offline.IsEnabled = false;
-            if (CheckConnection("https://www.minecraft.net/"))
-            {
 
                 var th = new Thread(() =>
                 {
@@ -216,13 +205,6 @@ namespace Turtlz_Launcher
                     UpdateSession(result.Session);
                 });
                 th.Start();
-            }
-            else
-            {
-                MessageBox.Show("Failed to connect Minecraft.net");
-                mojang.IsEnabled = true;
-                offline.IsEnabled = true;
-            }
 
 
         }
@@ -273,10 +255,6 @@ namespace Turtlz_Launcher
             MicrosoftLoginWindow loginWindow = new MicrosoftLoginWindow();
             loginWindow.Title = "Login with Microsoft Account";
             loginWindow.Height = 800;
-            loginWindow.PreviewMouseRightButtonDown += Login_MouseRightButtonDown;
-            loginWindow.PreviewMouseRightButtonUp += Login_MouseRightButtonDown;
-            loginWindow.MouseRightButtonDown += Login_MouseRightButtonDown;
-            loginWindow.MouseRightButtonUp += Login_MouseRightButtonDown;
             loginWindow.ShowInTaskbar = false;
             loginWindow.WindowStyle = WindowStyle.ToolWindow; 
             loginWindow.WindowStartupLocation = WindowStartupLocation.CenterScreen;
@@ -304,10 +282,26 @@ namespace Turtlz_Launcher
             loginWindow.ShowLogoutDialog();
         }
 
-        private void Login_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
+        private void txtbxPasswrd_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            e.Handled = true;
+
         }
-        
+
+        private void txtbxOffUsername_KeyDown(object sender, KeyEventArgs e)
+        {
+            if(e.Key == Key.Enter)
+            {
+                btnOfflineLog_Click(sender, e);
+            }
+        }
+
+        private void txtbxEmail_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                btnMojangLoging_Click(sender, e);
+            }
+
+        }
     }
 }

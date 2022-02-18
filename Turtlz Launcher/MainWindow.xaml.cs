@@ -21,6 +21,7 @@ using CmlLib.Core.Downloader;
 using System.Diagnostics;
 using CmlLib.Core.Installer;
 using CmlLib.Core.Files;
+using WPFUI;
 using CmlLib.Utils;
 using System.IO;
 using DiscordRPC;
@@ -55,6 +56,62 @@ namespace Turtlz_Launcher
         int minRam;
         int VerSelectAdvaced;
         string DisToken;
+        Changelogs logs;
+
+        async void LoadSettings()
+        {
+            if (!string.IsNullOrEmpty(Properties.Settings.Default.MCPath))
+            {
+
+                var defaultpath = new MinecraftPath(Properties.Settings.Default.MCPath);
+                await initializeLauncher(defaultpath);
+            }
+            else
+            {
+                var defaultpath = new MinecraftPath(MinecraftPath.GetOSDefaultPath());
+                await initializeLauncher(defaultpath);
+            }
+            UI(false);
+            status.Text = "Intializing RAM";
+            var computerMemory = Util.GetMemoryMb();
+            if (computerMemory == null)
+            {
+                MessageBox.Show("Failed to get computer memory");
+                this.Close();
+                return;
+            }
+
+            var max = computerMemory / 2.5;
+            if (max < 1024)
+            {
+                max = 1024;
+            }
+            else if (max > 4096 && max < 4500)
+            {
+                max = 4096;
+            }
+            else if (max > 8192)
+            {
+                max = 8192;
+            }
+            var min = max / 10;
+            minRam = (int)min;
+            sliderRAM.Minimum = (long)(max / 7);
+            sliderRAM.Maximum = (long)max;
+            txtMaxRam.Text = ((int)max).ToString() + " MB";
+            txtMinRam.Text = ((int)(max / 7)).ToString() + " MB";
+
+            if (Properties.Settings.Default.CurrentRam >= min && Properties.Settings.Default.CurrentRam <= max)
+            {
+                sliderRAM.Value = Properties.Settings.Default.CurrentRam;
+            }
+            else
+            {
+                sliderRAM.Value = (long)(max / 2);
+            }
+            status.Text = "Ready";
+            UI(true);
+        }
         public MainWindow()
         {
             InitializeComponent();
@@ -78,9 +135,12 @@ namespace Turtlz_Launcher
             m_notifyIcon.Click += new EventHandler(m_notifyIcon_Click);
         }
 
+        async void LoadLogs()
+        {
+        }
         private void Timer1_Tick(object sender, EventArgs e)
         {
-            lblRam.Text = "Ram: " + ((int)sliderRAM.Value).ToString();
+            lblRam.Text = "Ram: " + ((int)sliderRAM.Value).ToString() + " MB";
             if (isGameRuns == true)
             {
                 btnLaunch.IsEnabled = false;
@@ -109,7 +169,7 @@ namespace Turtlz_Launcher
                 txtlogin.Text = "Login";
 
             }
-            if (swtchVer.IsOn)
+            if (swtchVer.IsChecked == true)
             {
                 pnlAdVer.Visibility = Visibility.Visible;
                 VerSelectAdvaced = 1;
@@ -125,38 +185,9 @@ namespace Turtlz_Launcher
 
         private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            UI(false);
-            status.Text = "Intializing RAM";
-            var defaultpath = new MinecraftPath(MinecraftPath.GetOSDefaultPath());
-            await initializeLauncher(defaultpath);
-            var computerMemory = Util.GetMemoryMb();
-            if (computerMemory == null)
-            {
-                MessageBox.Show("Failed to get computer memory");
-                return;
-            }
-
-            var max = computerMemory / 2.5;
-            if (max < 1024)
-            {
-                max = 1024;
-            }
-            else if (max > 4096 && max < 4500)
-            {
-                max = 4096;
-            }
-            else if (max > 8192)
-            {
-                max = 8192;
-            }
-
-            var min = max / 10;
-            minRam = (int)min;
-            sliderRAM.Minimum = (long)(max / 7);
-            sliderRAM.Maximum = (long)max;
-            sliderRAM.Value = (long)(max / 2);
-            status.Text = "Ready";
-            UI(true);
+            ModernWpf.ThemeManager.Current.ApplicationTheme = ModernWpf.ApplicationTheme.Dark;
+            LoadSettings();
+            LoadLogs();
         }
         // Event Handler. Show download progress
         private void Launcher_ProgressChanged(object sender, ProgressChangedEventArgs e)
@@ -209,9 +240,9 @@ namespace Turtlz_Launcher
                 cmbxVer.Text = showVersion;
             }
         }
+        string MCver = "";
         private async void btnLaunch_Click(object sender, RoutedEventArgs e)
         {
-            string MCver = "";
             if (vars.session == null)
             {
                 MessageBox.Show("Login First");
@@ -292,10 +323,13 @@ namespace Turtlz_Launcher
                 //     launcher.FileDownloader = new SequenceDownloader();
 
                 if (cbSkipAssetsDownload.IsChecked == true)
+                {
                     launcher.GameFileCheckers.AssetFileChecker = null;
-                else if (launcher.GameFileCheckers.AssetFileChecker == null)
-                    launcher.GameFileCheckers.AssetFileChecker = new AssetChecker();
 
+
+                if (launcher.GameFileCheckers.AssetFileChecker == null)
+                        launcher.GameFileCheckers.AssetFileChecker = new AssetChecker();
+                }
                 // check file hash or don't check
                 if (launcher.GameFileCheckers.AssetFileChecker != null)
                     launcher.GameFileCheckers.AssetFileChecker.CheckHash = !cbSkipHashCheck.IsChecked == true;
@@ -349,6 +383,7 @@ namespace Turtlz_Launcher
             btnMCVer.IsEnabled = value;
             btnLaunch.IsEnabled = value;
         }
+        static Process MCprocess;
         private void StartProcess(Process process)
         {
             File.WriteAllText("launcher.txt", process.StartInfo.Arguments);
@@ -362,20 +397,19 @@ namespace Turtlz_Launcher
             process.EnableRaisingEvents = true;
             process.ErrorDataReceived += Process_ErrorDataReceived;
             process.OutputDataReceived += Process_OutputDataReceived;
-
-            process.Start();
-            process.BeginErrorReadLine();
-            process.BeginOutputReadLine();
+            MCprocess = process;
+            MCprocess.Start();
+            MCprocess.BeginErrorReadLine();
+            MCprocess.BeginOutputReadLine();
             isGameRuns = true;
             Hide();
             if (m_notifyIcon != null)
             {
                 m_notifyIcon.ShowBalloonTip(2000);
             }
-
             var th = new System.Threading.Thread(() =>
             {
-                process.WaitForExit();
+                MCprocess.WaitForExit();
                 this.Dispatcher.Invoke(
                         System.Windows.Threading.DispatcherPriority.Normal,
                         new Action(
@@ -460,14 +494,40 @@ namespace Turtlz_Launcher
 
         void SaveSettings()
         {
+            bool bools = false;
+            if (VerSelectAdvaced == 0)
+            {
+                bools = false;
+            }
+            else if (VerSelectAdvaced == 1)
+            {
+                bools = true;
+            }
             //MCPath / RAM / DRPC / MCVer
-            string _File = txtMCPath.Text;
-            char Quote = Microsoft.VisualBasic.ControlChars.Quote;
-            StreamWriter writer;
-            writer = File.CreateText("appcache");
-            writer.Write(_File);
-            writer.Close();
-
+            Properties.Settings.Default.MCPath = gamepath.BasePath;
+            Properties.Settings.Default.CurrentRam = (int)sliderRAM.Value;
+            Properties.Settings.Default.UseDiscordRPC = switchRPC.IsOn;
+            Properties.Settings.Default.CurrentVer = MCver;
+            Properties.Settings.Default.UseAdvacedVer = bools;
+            if (cbSkipAssetsDownload.IsChecked == true)
+            {
+                bools = true;
+            }
+            else if (cbSkipAssetsDownload.IsChecked == false)
+            {
+                bools = false;
+            }
+            Properties.Settings.Default.SkipAssetsDown = bools;
+            if (cbSkipHashCheck.IsChecked == true)
+            {
+                bools = true;
+            }
+            else if (cbSkipHashCheck.IsChecked == false)
+            {
+                bools = false;
+            }
+            Properties.Settings.Default.SkipHashCheck = bools;
+            Properties.Settings.Default.Save();
         }
         void OnClose(object sender, CancelEventArgs args)
         {
@@ -560,6 +620,7 @@ namespace Turtlz_Launcher
         }
 
         bool isRPCon;
+        static string RPCstate;
         private void RPCTick(object sender, EventArgs e)
         {
             RichPresence tempPrec;
@@ -615,7 +676,20 @@ namespace Turtlz_Launcher
                     }
                 };
                 presence = tempPrec;
-                RPCclient.SetPresence(presence);
+                if (RPCclient != null)
+                {
+                    if (!RPCclient.IsDisposed)
+                    {
+                        try
+                        {
+                            RPCclient.SetPresence(presence);
+                        }
+                        catch (Exception ex)
+                        {
+
+                        }
+                    }
+                }
             }
             if (!isGameRuns)
             {
@@ -630,7 +704,20 @@ namespace Turtlz_Launcher
                     }
                 };
                 presence = tempPrec;
-                RPCclient.SetPresence(presence);
+                if (RPCclient != null)
+                {
+                    if (!RPCclient.IsDisposed)
+                    {
+                        try
+                        {
+                            RPCclient.SetPresence(presence);
+                        }
+                        catch (Exception ex)
+                        {
+
+                        }
+                    }
+                }
             }
         }
     }

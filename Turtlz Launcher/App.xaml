@@ -10,12 +10,18 @@
                 <ui:ThemeResources />
                 <ui:XamlControlsResources />
                 <ResourceDictionary Source="pack://application:,,,/FluentWPF;component/Styles/Controls.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/WPFUI;component/Styles/Theme/Dark.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/WPFUI;component/Styles/WPFUI.xaml" />
                 <!-- Other merged dictionaries here -->
             </ResourceDictionary.MergedDictionaries>
             <!-- Other app resources here -->
+            <Color x:Key="SystemAccentColorDark3">#004200</Color>
+            <Color x:Key="SystemAccentColorDark2">#004200</Color>
             <Color x:Key="SystemAccentColorDark1">#004200</Color>
             <Color x:Key="SystemAccentColor">DarkGreen</Color>
             <Color x:Key="SystemAccentColorLight1">#297D29</Color>
+            <Color x:Key="SystemAccentColorLight2">#297D29</Color>
+            <Color x:Key="SystemAccentColorLight3">#297D29</Color>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

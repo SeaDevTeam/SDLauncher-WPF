@@ -7,7 +7,7 @@
       mc:Ignorable="d" 
       Title="Login"
       xmlns:wpfui="clr-namespace:WPFUI.Controls;assembly=WPFUI"
-      Background="{fw:AcrylicBrush TargetName=Grid, TintOpacity=0.75, TintColor=#1E1E1E}"
+      Background="{fw:AcrylicBrush TargetName=Grid, TintOpacity=0.85, TintColor=#1E1E1E}"
       xmlns:fw="clr-namespace:SourceChord.FluentWPF;assembly=FluentWPF"
       xmlns:ui="http://schemas.modernwpf.com/2019">
     <ui:ContentDialog.Resources>

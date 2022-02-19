@@ -104,17 +104,7 @@
                     <TextBlock Margin="10" x:Name="lblWelcome" HorizontalAlignment="Left" FontSize="35" Text="Welcome!" FontFamily="pack://application:,,,/Fonts/#Pixeboy" />
                 </StackPanel>
                 <ui:ScrollViewerEx Margin="0,50,0,125">
-                    <RichTextBox Name="richtxt">
-                        <RichTextBox.Document>
-                            <FlowDocument>
-                                <Paragraph>
-                                    <Run Text="Patch Notes" FontFamily="Segoe UI" FontSize="23"/>
-                                    <LineBreak/>
-                                    <Run Text="test" FontFamily="Segoe UI"/>
-                                </Paragraph>
-                            </FlowDocument>
-                        </RichTextBox.Document>
-                    </RichTextBox>
+                    <RichTextBox Name="richtxt" FontFamily="Segoe UI" IsEnabled="False" Margin="10,0,15,0"/>
                 </ui:ScrollViewerEx>
                 <StackPanel VerticalAlignment="Bottom" Margin="5,0,5,75" HorizontalAlignment="Right" Orientation="Horizontal">
                     <StackPanel Orientation="Horizontal"  Margin="0,0,5,0" Name="pnlAdVer" Visibility="Collapsed" >

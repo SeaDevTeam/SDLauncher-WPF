@@ -41,6 +41,7 @@
     <PackageReference Include="Discord.Net.WebSocket" Version="3.3.0" />
     <PackageReference Include="DiscordRichPresence" Version="1.0.175" />
     <PackageReference Include="FluentWPF" Version="0.10.2" />
+    <PackageReference Include="HtmlToOpenXml.dll" Version="2.2.0" />
     <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.1108.44" />
     <PackageReference Include="ModernWpfUI" Version="0.9.4" />
     <PackageReference Include="WPF-UI" Version="1.2.1" />

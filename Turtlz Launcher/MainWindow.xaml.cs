@@ -55,7 +55,6 @@ namespace Turtlz_Launcher
         public static string currentVer;
         int minRam;
         int VerSelectAdvaced;
-        string DisToken;
         Changelogs logs;
 
         async void LoadSettings()
@@ -111,6 +110,15 @@ namespace Turtlz_Launcher
             }
             status.Text = "Ready";
             UI(true);
+            switchRPC.IsOn = Properties.Settings.Default.UseDiscordRPC;
+            cbSkipAssetsDownload.IsChecked = Properties.Settings.Default.SkipAssetsDown;
+            cbSkipHashCheck.IsChecked = Properties.Settings.Default.SkipHashCheck;
+            swtchVer.IsChecked = Properties.Settings.Default.UseAdvacedVer;
+            if (!string.IsNullOrEmpty(Properties.Settings.Default.CurrentVer))
+            {
+                btnMCVer.Content = Properties.Settings.Default.CurrentVer;
+                cmbxVer.Text = Properties.Settings.Default.CurrentVer;
+            }
         }
         public MainWindow()
         {
@@ -137,6 +145,25 @@ namespace Turtlz_Launcher
 
         async void LoadLogs()
         {
+            status.Text = "Loading Changelogs";
+            logs = await Changelogs.GetChangelogs();
+            LoadLogsnext(await logs.GetChangelogHtml("1.18.1"),"1.18.1");
+            LoadLogsnext(await logs.GetChangelogHtml("1.18"),"1.18");
+            LoadLogsnext(await logs.GetChangelogHtml("1.17.1"),"1.7.1");
+        }
+        void LoadLogsnext(string body , string ver)
+        {
+            status.Text = "Fletching: v" + ver;
+            System.Windows.Forms.WebBrowser wb = new System.Windows.Forms.WebBrowser();
+            wb.Navigate("about:blank");
+            var fullbody = "<style>" + Environment.NewLine + "p,h1,li,span,body,html {" + Environment.NewLine + "font-family:\"Segoe UI\";" + Environment.NewLine + "}" + Environment.NewLine + "</style>" + Environment.NewLine + "<body>" + "<h1>Version " + ver + "</h1>" + body + "</body>";
+            wb.Document.Write(fullbody);
+            wb.Document.ExecCommand("SelectAll", false, null);
+            wb.Document.ExecCommand("Copy", false, null);
+
+            richtxt.Paste();
+            richtxt.FontFamily = new FontFamily("Segoe UI");
+            status.Text = "Ready";
         }
         private void Timer1_Tick(object sender, EventArgs e)
         {
@@ -183,7 +210,7 @@ namespace Turtlz_Launcher
             }
         }
 
-        private async void Window_Loaded(object sender, RoutedEventArgs e)
+        private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             ModernWpf.ThemeManager.Current.ApplicationTheme = ModernWpf.ApplicationTheme.Dark;
             LoadSettings();

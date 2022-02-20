@@ -26,11 +26,21 @@ namespace Turtlz_Launcher
         public Login()
         {
             InitializeComponent();
-
+            startup();
         }
         MLogin login = new MLogin();
         public static string mail;
         public static string pass;
+        void startup()
+        {
+            if (Properties.Settings.Default.autologin)
+            {
+                if (Properties.Settings.Default.session != null)
+                {
+                    txtbxOffUsername.Text = Properties.Settings.Default.session.Username;
+                }
+            }
+        }
         private void btnMojangLoging_Click(object sender, RoutedEventArgs e)
         {
             mail = txtbxEmail.Text;

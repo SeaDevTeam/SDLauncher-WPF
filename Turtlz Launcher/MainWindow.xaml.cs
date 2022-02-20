@@ -59,6 +59,7 @@ namespace Turtlz_Launcher
 
         async void LoadSettings()
         {
+            switchAutoLogin.IsOn = Properties.Settings.Default.autologin;
             if (!string.IsNullOrEmpty(Properties.Settings.Default.MCPath))
             {
 
@@ -123,10 +124,28 @@ namespace Turtlz_Launcher
         public MainWindow()
         {
             InitializeComponent();
-            var logindialog = new Login();
-            logindialog.IsPrimaryButtonEnabled = false;
-            logindialog.IsSecondaryButtonEnabled = false;
-            logindialog.ShowAsync();
+            if (Properties.Settings.Default.autologin)
+            {
+                if (Properties.Settings.Default.session != null)
+                {
+                    vars.session = Properties.Settings.Default.session;
+                    vars.UserName = Properties.Settings.Default.session.Username;
+                }
+                else
+                {
+                    var logindialog = new Login();
+                    logindialog.IsPrimaryButtonEnabled = false;
+                    logindialog.IsSecondaryButtonEnabled = false;
+                    logindialog.ShowAsync();
+                }
+            }
+            else
+            {
+                var logindialog = new Login();
+                logindialog.IsPrimaryButtonEnabled = false;
+                logindialog.IsSecondaryButtonEnabled = false;
+                logindialog.ShowAsync();
+            }
             timer = new System.Windows.Threading.DispatcherTimer();
             timer.Tick += Timer1_Tick;
             timer.Interval = new TimeSpan(0, 0, 0, 0, 10);
@@ -139,7 +158,7 @@ namespace Turtlz_Launcher
             m_notifyIcon.BalloonTipText = "Click to show";
             m_notifyIcon.BalloonTipTitle = "Emarld Launcher";
             m_notifyIcon.Text = "Emarld Launcher";
-            m_notifyIcon.Icon = new System.Drawing.Icon("pngwing.com.ico");
+            m_notifyIcon.Icon = new System.Drawing.Icon("app.ico");
             m_notifyIcon.Click += new EventHandler(m_notifyIcon_Click);
         }
 
@@ -147,9 +166,22 @@ namespace Turtlz_Launcher
         {
             status.Text = "Loading Changelogs";
             logs = await Changelogs.GetChangelogs();
+            LoadLogsnext(await logs.GetChangelogHtml("1.18.2-re1"),"1.18.2 Pre-release 1");
             LoadLogsnext(await logs.GetChangelogHtml("1.18.1"),"1.18.1");
             LoadLogsnext(await logs.GetChangelogHtml("1.18"),"1.18");
             LoadLogsnext(await logs.GetChangelogHtml("1.17.1"),"1.7.1");
+            LoadLogsnext(await logs.GetChangelogHtml("1.16"),"1.16");
+            clearclipBoard();
+        }
+        void clearclipBoard()
+        {
+            System.Windows.Forms.WebBrowser wb = new System.Windows.Forms.WebBrowser();
+            wb.Navigate("about:blank");
+            wb.Document.Write("<p>Never gonna give you up</p>");
+            wb.Document.ExecCommand("SelectAll", false, null);
+            wb.Document.ExecCommand("Copy", false, null);
+            wb.Dispose();
+
         }
         void LoadLogsnext(string body , string ver)
         {
@@ -157,12 +189,14 @@ namespace Turtlz_Launcher
             System.Windows.Forms.WebBrowser wb = new System.Windows.Forms.WebBrowser();
             wb.Navigate("about:blank");
             var fullbody = "<style>" + Environment.NewLine + "p,h1,li,span,body,html {" + Environment.NewLine + "font-family:\"Segoe UI\";" + Environment.NewLine + "}" + Environment.NewLine + "</style>" + Environment.NewLine + "<body>" + "<h1>Version " + ver + "</h1>" + body + "</body>";
-            wb.Document.Write(fullbody);
+            wb.Document.Write(fullbody.Replace("h1","h2").ToString());
             wb.Document.ExecCommand("SelectAll", false, null);
             wb.Document.ExecCommand("Copy", false, null);
 
             richtxt.Paste();
-            richtxt.FontFamily = new FontFamily("Segoe UI");
+            TextRange allText = new TextRange(richtxt.Document.ContentStart, richtxt.Document.ContentEnd);
+            allText.ApplyPropertyValue(RichTextBox.FontFamilyProperty, new FontFamily("Segoe UI"));
+            allText.ApplyPropertyValue(RichTextBox.ForegroundProperty, status.Foreground);
             status.Text = "Ready";
         }
         private void Timer1_Tick(object sender, EventArgs e)
@@ -525,16 +559,23 @@ namespace Turtlz_Launcher
             if (VerSelectAdvaced == 0)
             {
                 bools = false;
+                MCver = btnMCVer.Content.ToString();
             }
             else if (VerSelectAdvaced == 1)
             {
                 bools = true;
+                MCver = cmbxVer.Text.ToString();
             }
             //MCPath / RAM / DRPC / MCVer
             Properties.Settings.Default.MCPath = gamepath.BasePath;
             Properties.Settings.Default.CurrentRam = (int)sliderRAM.Value;
             Properties.Settings.Default.UseDiscordRPC = switchRPC.IsOn;
             Properties.Settings.Default.CurrentVer = MCver;
+            if (vars.session != null)
+            {
+                Properties.Settings.Default.session = vars.session;
+            }
+            Properties.Settings.Default.autologin = switchAutoLogin.IsOn;
             Properties.Settings.Default.UseAdvacedVer = bools;
             if (cbSkipAssetsDownload.IsChecked == true)
             {

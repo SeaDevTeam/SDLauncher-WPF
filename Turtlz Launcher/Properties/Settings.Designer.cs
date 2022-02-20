@@ -106,5 +106,28 @@ namespace Turtlz_Launcher.Properties {
                 this["MCPath"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool autologin {
+            get {
+                return ((bool)(this["autologin"]));
+            }
+            set {
+                this["autologin"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::CmlLib.Core.Auth.MSession session {
+            get {
+                return ((global::CmlLib.Core.Auth.MSession)(this["session"]));
+            }
+            set {
+                this["session"] = value;
+            }
+        }
     }
 }

@@ -211,6 +211,10 @@ namespace Turtlz_Launcher
         }
         private void Timer1_Tick(object sender, EventArgs e)
         {
+            if (!string.IsNullOrEmpty(vars.Serv))
+            {
+                join2serv.Content = vars.Serv;
+            }
             lblRam.Text = "Ram: " + ((int)sliderRAM.Value).ToString() + " MB";
             if (vars.session != null)
             {
@@ -350,7 +354,13 @@ namespace Turtlz_Launcher
                 }
 
             }
-            isGameRuns = true;
+            string ip = "";
+
+            if (!string.IsNullOrEmpty(vars.Serv))
+            {
+                ip = "";
+            }
+                isGameRuns = true;
             try
             {
                 // create LaunchOption
@@ -365,7 +375,7 @@ namespace Turtlz_Launcher
 
                     FullScreen = false,
 
-                    ServerIp = "",
+                    ServerIp = ip,
                     MinimumRamMb = minRam,
                     DockName = "",
                     DockIcon = ""

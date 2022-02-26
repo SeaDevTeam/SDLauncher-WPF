@@ -21,6 +21,7 @@ namespace Turtlz_Launcher
     {
         MCStatusEx stat;
         public static System.Windows.Threading.DispatcherTimer timer;
+        bool iscus = false;
 
         public openToServ()
         {
@@ -38,33 +39,68 @@ namespace Turtlz_Launcher
         {
             if (stat != null)
             {
-                if (stat.Online == true)
+                if (!iscus)
                 {
-                    Get.Visibility = Visibility.Collapsed;
-                    Off.Visibility = Visibility.Collapsed;
-                    De.Visibility = Visibility.Visible;
-                    try
+                    if (stat.Online == true)
                     {
-                        Play.Text = stat.Players + "/" + stat.MaxPlayers + " Playing";
-                        Ping.Text = " " + stat.Latency + "ms";
-                        Ver.Text = stat.Version;
-                    }
-                    catch
-                    {
+                        Get.Visibility = Visibility.Collapsed;
+                        Off.Visibility = Visibility.Collapsed;
+                        De.Visibility = Visibility.Visible;
+                        try
+                        {
+                            Play.Text = stat.Players + "/" + stat.MaxPlayers + " Playing";
+                            Ping.Text = " " + stat.Latency + "ms";
+                            Ver.Text = stat.Version;
+                        }
+                        catch
+                        {
 
+                        }
                     }
-                }
-                else if (stat.Online == null)
-                {
-                    De.Visibility = Visibility.Collapsed;
-                    Get.Visibility = Visibility.Visible;
-                    Off.Visibility = Visibility.Collapsed;
+                    else if (stat.Online == null)
+                    {
+                        De.Visibility = Visibility.Collapsed;
+                        Get.Visibility = Visibility.Visible;
+                        Off.Visibility = Visibility.Collapsed;
+                    }
+                    else
+                    {
+                        De.Visibility = Visibility.Collapsed;
+                        Get.Visibility = Visibility.Collapsed;
+                        Off.Visibility = Visibility.Visible;
+                    }
                 }
                 else
                 {
-                    De.Visibility = Visibility.Collapsed;
-                    Get.Visibility = Visibility.Collapsed;
-                    Off.Visibility = Visibility.Visible;
+                    if (stat.Online == true)
+                    {
+                        CGet.Visibility = Visibility.Collapsed;
+                        COff.Visibility = Visibility.Collapsed;
+                        CDe.Visibility = Visibility.Visible;
+                        try
+                        {
+                            CPlay.Text = stat.Players + "/" + stat.MaxPlayers + " Playing";
+                            CPing.Text = " " + stat.Latency + "ms";
+                            CVer.Text = stat.Version;
+                        }
+                        catch
+                        {
+
+                        }
+                    }
+                    else if (stat.Online == null)
+                    {
+                        CDe.Visibility = Visibility.Collapsed;
+                        CGet.Visibility = Visibility.Visible;
+                        COff.Visibility = Visibility.Collapsed;
+                    }
+                    else
+                    {
+                        CDe.Visibility = Visibility.Collapsed;
+                        CGet.Visibility = Visibility.Collapsed;
+                        COff.Visibility = Visibility.Visible;
+                    }
+
                 }
             }
         }
@@ -110,7 +146,39 @@ namespace Turtlz_Launcher
                     txtServ.Text = "turtlzNetwork.aternos.me";
                     stat = new MCStatusEx("turtlzNetwork.aternos.me", 25565);
                 }
+                if(m.Header.ToString() == "Custom")
+                {
+                    stat = null;
+                    btnServCusOK.Visibility = Visibility.Visible;
+                    btnServOk.Visibility = Visibility.Collapsed;
+                    iscus = true;
+                }
+                else
+                {
+                    iscus = false;
+                    btnServCusOK.Visibility = Visibility.Collapsed;
+                    btnServOk.Visibility = Visibility.Visible;
+                }
             }
+        }
+
+        private void txtxbxServ_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            stat = new MCStatusEx(txtxbxServ.Text, 25565);
+        }
+
+        private void btnServCusOK_Click(object sender, RoutedEventArgs e)
+        {
+            vars.Serv = txtxbxServ.Text;
+            stat = null;
+            this.Hide();
+        }
+
+        private void btnServOk_Click(object sender, RoutedEventArgs e)
+        {
+            vars.Serv = txtServ.Text;
+            stat = null;
+            this.Hide();
         }
     }
 }

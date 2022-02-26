@@ -99,9 +99,17 @@ namespace Turtlz_Launcher
 
         private void btnOfflineLog_Click(object sender, RoutedEventArgs e)
         {
+            char[] delimiters = new char[] { ' ', '\r', '\n' };
             if (!string.IsNullOrEmpty(txtbxOffUsername.Text))
             {
-                UpdateSession(MSession.GetOfflineSession(txtbxOffUsername.Text));
+                if (txtbxOffUsername.Text.Split(delimiters, StringSplitOptions.RemoveEmptyEntries).Length == 1)
+                {
+                    UpdateSession(MSession.GetOfflineSession(txtbxOffUsername.Text.Replace(" ","").ToString()));
+                }
+                else
+                {
+                    MessageBox.Show("You have to remove " + (txtbxOffUsername.Text.Split(delimiters, StringSplitOptions.RemoveEmptyEntries).Length - 1).ToString() + " words of your user name");
+                }
             }
             else
             {

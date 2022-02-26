@@ -9,8 +9,8 @@
 	<AssemblyName>Emerald Launcher</AssemblyName>
     <ApplicationIcon>icon.ico</ApplicationIcon>
     <ApplicationManifest>app.manifest</ApplicationManifest>
-    <AssemblyVersion>0.3.5.0</AssemblyVersion>
-    <FileVersion>0.3.5.0</FileVersion>
+    <AssemblyVersion>0.5.0.0</AssemblyVersion>
+    <FileVersion>0.5.0.0</FileVersion>
     <Authors>Turtlz Dev Team</Authors>
     <Company>Turtlz Dev Team</Company>
     <Copyright>Copyright © 2021 Turtlz Dev Team</Copyright>
@@ -20,14 +20,20 @@
     <PackageReleaseNotes></PackageReleaseNotes>
     <Configurations>Debug;Release;Release x64</Configurations>
     <Platforms>AnyCPU;x64;x86</Platforms>
-    <Version>0.3.5.0</Version>
+    <Version>0.5.0.0</Version>
     <RepositoryUrl>https://github.com/Chaniru22/Emerald-Launcher-Public/</RepositoryUrl>
     <PackageProjectUrl>https://github.com/Chaniru22/Emerald-Launcher-Public/</PackageProjectUrl>
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="bedwarspractice.png" />
     <None Remove="bg.jpg" />
+    <None Remove="bridger.png" />
     <None Remove="Fonts\Pixeboy.ttf" />
+    <None Remove="Hypixel.png" />
+    <None Remove="mineman.png" />
+    <None Remove="pika-network.png" />
+    <None Remove="turtlz.png" />
     <None Remove="wallpaper.png" />
   </ItemGroup>
 
@@ -45,7 +51,9 @@
     <PackageReference Include="FluentWPF" Version="0.10.2" />
     <PackageReference Include="HtmlToOpenXml.dll" Version="2.2.0" />
     <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.1108.44" />
+    <PackageReference Include="MineStat" Version="2.1.0" />
     <PackageReference Include="ModernWpfUI" Version="0.9.4" />
+    <PackageReference Include="System.Runtime" Version="4.3.1" />
     <PackageReference Include="WPF-UI" Version="1.2.1" />
   </ItemGroup>
 
@@ -57,10 +65,16 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="imgServ\bedwarspractice.png" />
     <Resource Include="bg.jpg" />
+    <Resource Include="imgServ\bridger.png" />
     <Resource Include="Fonts\Pixeboy.ttf">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="imgServ\Hypixel.png" />
+    <Resource Include="imgServ\mineman.png" />
+    <Resource Include="imgServ\pika-network.png" />
+    <Resource Include="imgServ\turtlz.png" />
     <Resource Include="wallpaper.png" />
   </ItemGroup>
 

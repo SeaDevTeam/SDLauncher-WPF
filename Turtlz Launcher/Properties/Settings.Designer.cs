@@ -129,5 +129,29 @@ namespace Turtlz_Launcher.Properties {
                 this["session"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool Autohide {
+            get {
+                return ((bool)(this["Autohide"]));
+            }
+            set {
+                this["Autohide"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string RPCStats {
+            get {
+                return ((string)(this["RPCStats"]));
+            }
+            set {
+                this["RPCStats"] = value;
+            }
+        }
     }
 }

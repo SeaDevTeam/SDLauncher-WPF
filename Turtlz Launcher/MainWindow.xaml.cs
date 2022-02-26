@@ -112,6 +112,8 @@ namespace Turtlz_Launcher
             status.Text = "Ready";
             UI(true);
             switchRPC.IsOn = Properties.Settings.Default.UseDiscordRPC;
+            switchhide.IsOn = Properties.Settings.Default.Autohide;
+            txtbxStats.Text = Properties.Settings.Default.RPCStats;
             cbSkipAssetsDownload.IsChecked = Properties.Settings.Default.SkipAssetsDown;
             cbSkipHashCheck.IsChecked = Properties.Settings.Default.SkipHashCheck;
             swtchVer.IsChecked = Properties.Settings.Default.UseAdvacedVer;
@@ -165,13 +167,21 @@ namespace Turtlz_Launcher
         async void LoadLogs()
         {
             status.Text = "Loading Changelogs";
-            logs = await Changelogs.GetChangelogs();
-            LoadLogsnext(await logs.GetChangelogHtml("1.18.2-re1"),"1.18.2 Pre-release 1");
-            LoadLogsnext(await logs.GetChangelogHtml("1.18.1"),"1.18.1");
-            LoadLogsnext(await logs.GetChangelogHtml("1.18"),"1.18");
-            LoadLogsnext(await logs.GetChangelogHtml("1.17.1"),"1.7.1");
-            LoadLogsnext(await logs.GetChangelogHtml("1.16"),"1.16");
-            clearclipBoard();
+            try
+            {
+                logs = await Changelogs.GetChangelogs();
+                LoadLogsnext(await logs.GetChangelogHtml(launcher.Versions.LatestSnapshotVersion.Name), "1.18.2 Pre-release");
+                LoadLogsnext(await logs.GetChangelogHtml("1.18.1"), "1.18.1");
+                LoadLogsnext(await logs.GetChangelogHtml("1.18"), "1.18");
+                LoadLogsnext(await logs.GetChangelogHtml("1.17.1"), "1.7.1");
+                LoadLogsnext(await logs.GetChangelogHtml("1.16"), "1.16");
+                clearclipBoard();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Getting changelogs faild " + ex.Message);
+            }
+            status.Text = "Ready";
         }
         void clearclipBoard()
         {
@@ -202,21 +212,16 @@ namespace Turtlz_Launcher
         private void Timer1_Tick(object sender, EventArgs e)
         {
             lblRam.Text = "Ram: " + ((int)sliderRAM.Value).ToString() + " MB";
-            if (isGameRuns == true)
-            {
-                btnLaunch.IsEnabled = false;
-            }
-            else
-            {
-                btnLaunch.IsEnabled = true;
-            }
             if (vars.session != null)
             {
                 try
                 {
                     lblWelcome.Text = "Weclome! " + vars.UserName;
                     prfPic.DisplayName = vars.UserName;
+                    prpFly.DisplayName = vars.UserName;
                     txtlogin.Text = vars.UserName;
+                    btnLogin.Content = "Change Account";
+                    lbluserFly.Text = vars.UserName;
                 }
                 catch (Exception ex)
                 {
@@ -227,7 +232,10 @@ namespace Turtlz_Launcher
             {
                 lblWelcome.Text = "Weclome!";
                 prfPic.DisplayName = "";
+                prpFly.DisplayName = "";
                 txtlogin.Text = "Login";
+                lbluserFly.Text = "Login";
+                btnLogin.Content = "Login";
 
             }
             if (swtchVer.IsChecked == true)
@@ -304,6 +312,7 @@ namespace Turtlz_Launcher
         string MCver = "";
         private async void btnLaunch_Click(object sender, RoutedEventArgs e)
         {
+            UI(false);
             if (vars.session == null)
             {
                 MessageBox.Show("Login First");
@@ -311,6 +320,7 @@ namespace Turtlz_Launcher
                 logindialog.IsPrimaryButtonEnabled = false;
                 logindialog.IsSecondaryButtonEnabled = false;
                 logindialog.ShowAsync();
+                UI(true);
                 return;
             }
             if (VerSelectAdvaced == 0)
@@ -318,6 +328,7 @@ namespace Turtlz_Launcher
                 if (btnMCVer.Content.ToString() == "Version")
                 {
                     MessageBox.Show("Select Version");
+                    UI(true);
                     return;
                 }
                 else
@@ -330,6 +341,7 @@ namespace Turtlz_Launcher
                 if (string.IsNullOrEmpty(cmbxVer.Text.ToString()))
                 {
                     MessageBox.Show("Select Version");
+                    UI(true);
                     return;
                 }
                 else
@@ -338,7 +350,7 @@ namespace Turtlz_Launcher
                 }
 
             }
-            UI(false);
+            isGameRuns = true;
             try
             {
                 // create LaunchOption
@@ -432,7 +444,6 @@ namespace Turtlz_Launcher
                     logPage.Hide();
 
                 logPage = new GameLog();
-                UI(true);
                 logPage.ShowAsync();
 
                 // enable ui
@@ -440,9 +451,11 @@ namespace Turtlz_Launcher
         }
         private void UI(bool value)
         {
-            cmbxVer.IsEnabled = value;
-            btnMCVer.IsEnabled = value;
-            btnLaunch.IsEnabled = value;
+            pnlLaunch.IsEnabled = value;
+            sliderRAM.IsEnabled = value;
+            swtchVer.IsEnabled = value;
+            cbSkipAssetsDownload.IsEnabled = value;
+            cbSkipHashCheck.IsEnabled = value;
         }
         static Process MCprocess;
         private void StartProcess(Process process)
@@ -462,8 +475,10 @@ namespace Turtlz_Launcher
             MCprocess.Start();
             MCprocess.BeginErrorReadLine();
             MCprocess.BeginOutputReadLine();
-            isGameRuns = true;
-            Hide();
+            if (switchhide.IsOn)
+            {
+                Hide();
+            }
             if (m_notifyIcon != null)
             {
                 m_notifyIcon.ShowBalloonTip(2000);
@@ -476,6 +491,7 @@ namespace Turtlz_Launcher
                         new Action(
                         delegate ()
                         {
+                            UI(true);
                             ShowWindow();
                             isGameRuns = false;
                         }
@@ -570,6 +586,8 @@ namespace Turtlz_Launcher
             Properties.Settings.Default.MCPath = gamepath.BasePath;
             Properties.Settings.Default.CurrentRam = (int)sliderRAM.Value;
             Properties.Settings.Default.UseDiscordRPC = switchRPC.IsOn;
+            Properties.Settings.Default.Autohide = switchhide.IsOn;
+            Properties.Settings.Default.RPCStats = txtbxStats.Text;
             Properties.Settings.Default.CurrentVer = MCver;
             if (vars.session != null)
             {
@@ -646,11 +664,13 @@ namespace Turtlz_Launcher
 
         private void TitleBarButton_Click(object sender, RoutedEventArgs e)
         {
+            Loginflyout.Hide();
             SettingsPane.IsPaneOpen = !SettingsPane.IsPaneOpen;
         }
 
         private void TitleBarButton_Click_1(object sender, RoutedEventArgs e)
         {
+            Loginflyout.Hide();
             var logindialog = new Login();
             logindialog.IsPrimaryButtonEnabled = false;
             logindialog.IsSecondaryButtonEnabled = false;
@@ -664,22 +684,22 @@ namespace Turtlz_Launcher
             {
                 LargeImageKey = "minecraft",
                 LargeImageText = "Playing Minecraft",
-                SmallImageKey = "nobacklarge",
+                SmallImageKey = "appico",
                 SmallImageText = "Emerald launcher"
             }
         };
         void RPCInitialize()
         {
-            RPCclient = new DiscordRpcClient("943158277678714900");
+            RPCclient = new DiscordRpcClient("945758066161356932");
             RPCclient.Logger = new ConsoleLogger() { Level = LogLevel.Warning };
             RPCclient.OnReady += (sender, e) =>
             {
-                MessageBox.Show("Received Ready from user "+ e.User.Username);
+                Debug.WriteLine("RPC Received Ready from user "+ e.User.Username);
             };
 
             RPCclient.OnPresenceUpdate += (sender, e) =>
             {
-                MessageBox.Show("Received Update!");
+                Debug.WriteLine("RPC Received Update!");
             };
 
             RPCclient.Initialize();
@@ -701,7 +721,7 @@ namespace Turtlz_Launcher
                 }
                 else
                 {
-                    MCver = btnMCVer.Content.ToString();
+                    MCver = " version " + btnMCVer.Content.ToString();
                 }
             }
             else if (VerSelectAdvaced == 1)
@@ -712,7 +732,7 @@ namespace Turtlz_Launcher
                 }
                 else
                 {
-                    MCver = cmbxVer.Text.ToString();
+                    MCver = " version " + cmbxVer.Text.ToString();
                 }
 
             }
@@ -735,12 +755,14 @@ namespace Turtlz_Launcher
             {
                 tempPrec = new RichPresence()
                 {
-                    Details = MCver,
-                    State = "Going to start",
+                    Details = "Going to play",
+                    State = txtbxStats.Text,
                     Assets = new Assets()
                     {
-                        LargeImageKey = "nobacklarge",
-                        LargeImageText = "Emerald launcher",
+                        LargeImageKey = "minecraft",
+                        LargeImageText = "Minecraft" + MCver,
+                        SmallImageKey = "appico",
+                        SmallImageText = "Emerald Launcher"
                     }
                 };
                 presence = tempPrec;
@@ -759,16 +781,18 @@ namespace Turtlz_Launcher
                     }
                 }
             }
-            if (!isGameRuns)
+            if (isGameRuns)
             {
                 tempPrec = new RichPresence()
                 {
-                    Details = MCver,
-                    State = "Playing",
+                    Details = "Playing as " + vars.session.Username,
+                    State = txtbxStats.Text,
                     Assets = new Assets()
                     {
-                        LargeImageKey = "nobacklarge",
-                        LargeImageText = "Emerald launcher",
+                        LargeImageKey = "minecraft",
+                        LargeImageText = "Minecraft" + MCver,
+                        SmallImageKey = "appico",
+                        SmallImageText = "Emerald Launcher"
                     }
                 };
                 presence = tempPrec;
@@ -787,6 +811,20 @@ namespace Turtlz_Launcher
                     }
                 }
             }
+        }
+
+        private void btnOpt_Click(object sender, RoutedEventArgs e)
+        {
+            SettingsPane.IsPaneOpen = false;
+            var path = System.IO.Path.Combine(gamepath.BasePath, "options.txt");
+            var f = new optionstxt(path);
+            f.IsPrimaryButtonEnabled = false;
+            f.ShowAsync();
+        }
+
+        private void join2serv_Click(object sender, RoutedEventArgs e)
+        {
+            new openToServ().ShowAsync();
         }
     }
 }

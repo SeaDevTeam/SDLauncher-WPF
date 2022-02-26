@@ -11,10 +11,11 @@
         Title="Emerald Launcher" Height="450" Width="800"
         xmlns:ui="http://schemas.modernwpf.com/2019"
         Closing="OnClose"
-        MinHeight="600"
+        MinHeight="700"
         xmlns:wpfui="clr-namespace:WPFUI.Controls;assembly=WPFUI"
         ui:WindowHelper.UseModernWindowStyle="True"
         MinWidth="660"
+        d:Height="800"
         ui:TitleBar.ExtendViewIntoTitleBar="True"
         IsVisibleChanged="OnIsVisibleChanged"
         xmlns:wv2="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
@@ -39,28 +40,61 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="114*"/>
                 <ColumnDefinition Width="227"/>
-                <ColumnDefinition Width="57" />
             </Grid.ColumnDefinitions>
             <StackPanel Grid.Column="0"  Orientation="Horizontal">
                 <TextBlock Text="Emerald Launcher" FontSize="14" Margin="15,0,0,0" VerticalAlignment="Center" Height="19"/>
             </StackPanel>
             <DockPanel Grid.Column="1" DockPanel.Dock="Right">
+
                 <StackPanel Orientation="Horizontal">
-                    <ui:TitleBarButton Width="100" Grid.Column="0" Click="TitleBarButton_Click_1">
+                    <ui:TitleBarButton Width="100" Grid.Column="0">
+                        <ui:FlyoutService.Flyout>
+                            <ui:Flyout x:Name="Loginflyout" AreOpenCloseAnimationsEnabled="True" Placement="Bottom">
+                                <ui:Flyout.FlyoutPresenterStyle>
+                                    <Style TargetType="ui:FlyoutPresenter">
+                                        <Setter Property="Padding" Value="0"/>
+                                        <Setter Property="Background" Value="Transparent"/>
+                                        <Setter Property="BorderThickness" Value="0"/>
+                                    </Style>
+                                </ui:Flyout.FlyoutPresenterStyle>
+                                <Border CornerRadius="5" Background="{fw:AcrylicBrush TintOpacity=0.94, TintColor=#1E1E1E,NoiseOpacity=0.025}">
+                                <Grid Margin="10" MinWidth="275">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*"/>
+                                        <RowDefinition Height="*"/>
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="50"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Grid.Row="0" HorizontalAlignment="Stretch" Orientation="Horizontal">
+                                        <ui:PersonPicture x:Name="prpFly" Width="60"/>
+                                            <TextBlock x:Name="lbluserFly" Text="Login" Margin="5,0,0,0" VerticalAlignment="Center" FontWeight="SemiBold" FontSize="23"/>
+                                            <Button x:Name="btnLogin" FontSize="13" Padding="10,5" Margin="10" Click="TitleBarButton_Click_1" Content="Login" />
+                                        </StackPanel>
+                                    <Button Click="TitleBarButton_Click" Grid.Column="1" MinWidth="0" Padding="10" HorizontalAlignment="Left">
+                                        <ui:SymbolIcon Symbol="Setting"/>
+                                    </Button>
+                                        <StackPanel Margin="50,5,0,0" Grid.Row="2">
+                                            <TextBlock FontSize="13" Text="Status:" Margin="0,0,0,1"/>
+                                            <TextBox x:Name="txtbxStats" MinHeight="60" TextWrapping="Wrap" MaxWidth="300"/>
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+                            </ui:Flyout>
+                        </ui:FlyoutService.Flyout>
                         <StackPanel Orientation="Horizontal">
-                            <ui:PersonPicture DisplayName="" Name="prfPic" Height="25" Margin="0,0,5,0" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                            <ui:PersonPicture DisplayName="" x:Name="prfPic" Height="27" Margin="0,0,5,0" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                             <TextBlock VerticalAlignment="Center" x:Name="txtlogin" FontFamily="Segoe UI" FontSize="12" Text="Login"/>
                         </StackPanel>
-                    </ui:TitleBarButton>
-                    <ui:TitleBarButton Click="TitleBarButton_Click">
-                        <ui:SymbolIcon Symbol="Setting" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                     </ui:TitleBarButton>
                 </StackPanel>
             </DockPanel>
         </Grid>
-        <ui:SplitView Grid.Row="1" PanePlacement="Right" OpenPaneLength="360" Name="SettingsPane" PaneBackground="Transparent">
+        <ui:SplitView Grid.Row="1" IsPaneOpen="True" PanePlacement="Right" OpenPaneLength="360" Name="SettingsPane" PaneBackground="Transparent">
             <ui:SplitView.Pane>
-                <Grid Background="{fw:AcrylicBrush TintOpacity=0.95, TintColor=#1E1E1E,NoiseOpacity=0.05}"  >
+                <ui:ScrollViewerEx>
+                <Grid Background="{fw:AcrylicBrush TintOpacity=0.98, TintColor=#1E1E1E,NoiseOpacity=0.025}"  >
                     <StackPanel Margin="10">
                         <StackPanel VerticalAlignment="Top" Orientation="Horizontal">
                             <ui:SymbolIcon Symbol="Setting" VerticalAlignment="Center" />
@@ -81,6 +115,7 @@
                                     <Button Margin="5,0,0,0" Background="{DynamicResource btnBackground}" Content="Change" x:Name="btnChangeMCpath" Click="btnChangeMCpath_Click"/>
                                 </StackPanel>
                                 <CheckBox Content="Use advanced versions selector" Margin="0,10,0,0" FontFamily="Segoe UI" FontSize="14" x:Name="swtchVer"/>
+                                <Button HorizontalAlignment="Left" x:Name="btnOpt" Click="btnOpt_Click" Background="{DynamicResource btnBackground}" Margin="0,5,0,0" Content="options.txt"/>
                             </StackPanel>
                         </Border>
                         <TextBlock Margin="0,10,0,5" Text="Download Settings" FontSize="15" FontWeight="SemiBold"/>
@@ -90,15 +125,17 @@
                                 <CheckBox Content="Skip hash check" FontFamily="Segoe UI" FontSize="14" x:Name="cbSkipHashCheck"/>
                             </StackPanel>
                         </Border>
-                        <TextBlock Margin="0,10,0,5" Text="Super Experimental" FontSize="15" FontWeight="SemiBold"/>
+                        <TextBlock Margin="0,10,0,5" Text="App Settings" FontSize="15" FontWeight="SemiBold"/>
                         <Border BorderThickness="1" CornerRadius="5" BorderBrush="#999999">
                             <StackPanel Margin="10" Orientation="Vertical">
                                 <ui:ToggleSwitch x:Name="switchRPC" Header="Show Discord activity"/>
+                                <ui:ToggleSwitch x:Name="switchhide" Header="Automatically hide when minecraft starts"/>
                                 <ui:ToggleSwitch x:Name="switchAutoLogin" Header="Autologin when app starts"/>
                             </StackPanel>
                         </Border>
                     </StackPanel>
                 </Grid>
+                </ui:ScrollViewerEx>
             </ui:SplitView.Pane>
             <Grid>
                 <StackPanel VerticalAlignment="Top" HorizontalAlignment="Left">
@@ -113,7 +150,8 @@
                         </RichTextBox.Resources>
                     </RichTextBox>
                 </ui:ScrollViewerEx>
-                <StackPanel VerticalAlignment="Bottom" Margin="5,0,5,75" HorizontalAlignment="Right" Orientation="Horizontal">
+                <StackPanel VerticalAlignment="Bottom" x:Name="pnlLaunch" Margin="5,0,5,75" HorizontalAlignment="Right" Orientation="Horizontal">
+                    <Button x:Name="join2serv" Click="join2serv_Click" Content="Servers"/>
                     <StackPanel Orientation="Horizontal"  Margin="0,0,5,0" Name="pnlAdVer" Visibility="Collapsed" >
                         <TextBlock FontSize="14" VerticalAlignment="Center" Text="version"/>
                         <ComboBox MinWidth="100" x:Name="cmbxVer"/>
@@ -171,15 +209,6 @@
                                 <Setter Property="CornerRadius" Value="5"/>
                             </Style>
                         </Button.Resources>
-                        <Button.Style>
-                            <Style TargetType="Button">
-                                <Style.Triggers>
-                                    <Trigger Property="IsMouseDirectlyOver" Value="True">
-                                        <Setter Property="Foreground" Value="Black"/>
-                                    </Trigger>
-                                </Style.Triggers>
-                            </Style>
-                        </Button.Style>
                         <Button.Effect>
                             <DropShadowEffect Direction="180" Color="LightBlue" ShadowDepth="5" BlurRadius="34" />
                         </Button.Effect>

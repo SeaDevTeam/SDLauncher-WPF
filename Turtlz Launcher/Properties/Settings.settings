@@ -29,5 +29,11 @@
     <Setting Name="session" Type="CmlLib.Core.Auth.MSession" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
+    <Setting Name="Autohide" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="RPCStats" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
   </Settings>
 </SettingsFile>

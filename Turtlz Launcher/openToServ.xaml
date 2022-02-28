@@ -32,12 +32,13 @@
                                 </Style>
                             </ui:MenuFlyout.MenuFlyoutPresenterStyle>
                             <MenuItem Click="MenuItem_Click" x:Name="menuItemHy" Header="Hypixel"/>
-                            <MenuItem Click="MenuItem_Click"  Header="Pika Network"/>
-                            <MenuItem Click="MenuItem_Click"  Header="Minemen"/>
-                            <MenuItem Click="MenuItem_Click"  Header="Bridger"/>
-                            <MenuItem Click="MenuItem_Click"  Header="Bed Wars Practice"/>
-                            <MenuItem Click="MenuItem_Click"  Header="Turtlz Network"/>
-                            <MenuItem Click="MenuItem_Click"  Header="Custom"/>
+                            <MenuItem Click="MenuItem_Click" x:Name="menuItemPika" Header="Pika Network"/>
+                            <MenuItem Click="MenuItem_Click" x:Name="menuItemMine" Header="Minemen"/>
+                            <MenuItem Click="MenuItem_Click" x:Name="menuItemBridge" Header="Bridger"/>
+                            <MenuItem Click="MenuItem_Click" x:Name="menuItemBed" Header="Bed Wars Practice"/>
+                            <MenuItem Click="MenuItem_Click" x:Name="menuItemTurtle" Header="Turtlz Network"/>
+                            <MenuItem Click="MenuItem_Click" x:Name="menuItemCus" Header="Custom"/>
+                            <MenuItem Click="MenuItem_Click" x:Name="menuItemNone" Header="None"/>
                         </ui:MenuFlyout>
                     </ui:DropDownButton.Flyout>
                 </ui:DropDownButton>
@@ -64,7 +65,11 @@
                 <Button Click="btnServCusOK_Click" x:Name="btnServCusOK" Background="Transparent" Width="300" Height="275" Style="{DynamicResource ButtonRevealStyle}" fw:PointerTracker.Enabled="True">
                     <Button.Content>
                         <StackPanel Margin="10" HorizontalAlignment="Center">
-                            <TextBox x:Name="txtxbxServ" TextChanged="txtxbxServ_TextChanged" MinWidth="100" MaxWidth="250"/>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBox x:Name="txtxbxServ" TextChanged="txtxbxServ_TextChanged" MinWidth="100" MaxWidth="250"/>
+                                <TextBlock VerticalAlignment="Center" Margin="5,0,5,0" Text=":"/>
+                                <TextBox x:Name="txtbxPort" Text="" TextChanged="txtbxPort_ValueChanged" MinWidth="75"/>
+                            </StackPanel>
                             <StackPanel x:Name="CDe">
                                 <TextBlock x:Name="CVer" HorizontalAlignment="Center" Margin="0,0,0,3" FontSize="14" FontWeight="SemiBold" Text="v1.18.1"/>
                                 <TextBlock x:Name="CPlay" HorizontalAlignment="Center" Margin="0,0,0,5" FontSize="13" FontWeight="SemiBold" Text="01/22 Plyaing"/>
@@ -77,6 +82,13 @@
                                     <ui:ProgressRing Margin="5,0,0,0" Foreground="LightGreen" IsActive="True"/>
                                 </StackPanel>
                             </StackPanel>
+                        </StackPanel>
+                    </Button.Content>
+                </Button>
+                <Button Click="btnServNone_Click" x:Name="btnServNone" Background="Transparent" Width="300" Height="275" Style="{DynamicResource ButtonRevealStyle}" fw:PointerTracker.Enabled="True">
+                    <Button.Content>
+                        <StackPanel Margin="10" VerticalAlignment="Center" HorizontalAlignment="Center">
+                            <TextBlock Text="None"/>
                         </StackPanel>
                     </Button.Content>
                 </Button>

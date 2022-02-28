@@ -35,5 +35,11 @@
     <Setting Name="RPCStats" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
+    <Setting Name="MCServer" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="MCport" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">25565</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

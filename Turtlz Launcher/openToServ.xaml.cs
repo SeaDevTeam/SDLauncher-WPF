@@ -21,7 +21,7 @@ namespace Turtlz_Launcher
     {
         MCStatusEx stat;
         public static System.Windows.Threading.DispatcherTimer timer;
-        bool iscus = false;
+        bool? iscus = false;
 
         public openToServ()
         {
@@ -33,13 +33,46 @@ namespace Turtlz_Launcher
             timer.Tick += Timer_Tick;
             timer.Interval = new TimeSpan(0, 0, 0, 0, 10);
             timer.Start();
-            MenuItem_Click(menuItemHy, e);
+            txtxbxServ.Text = vars.Serv;
+            txtbxPort.Text = "" + vars.port;
+            if (vars.Serv == "mc.hypixel.net")
+            {
+                MenuItem_Click(menuItemHy, e);
+            }
+            else if (vars.Serv == "play.pika-network.net")
+            {
+                MenuItem_Click(menuItemPika, e);
+            }
+            else if (vars.Serv == "minemen.club")
+            {
+                MenuItem_Click(menuItemMine, e);
+            }
+            else if (vars.Serv == "bridger.land")
+            {
+                MenuItem_Click(menuItemBridge, e);
+            }
+            else if (vars.Serv == "bedwarspractice.club")
+            {
+                MenuItem_Click(menuItemBed, e);
+            }
+            else if (vars.Serv == "turtlzNetwork.aternos.me")
+            {
+                MenuItem_Click(menuItemTurtle, e);
+            }
+            else if (vars.Serv == "")
+            {
+                MenuItem_Click(menuItemNone, e);
+            }
+            else
+            {
+                MenuItem_Click(menuItemCus, e);
+            }
         }
         private void Timer_Tick(object sender, EventArgs e)
         {
             if (stat != null)
             {
-                if (!iscus)
+                if (iscus == false)
                 {
                     if (stat.Online == true)
                     {
@@ -70,7 +103,7 @@ namespace Turtlz_Launcher
                         Off.Visibility = Visibility.Visible;
                     }
                 }
-                else
+                else if (iscus == false)
                 {
                     if (stat.Online == true)
                     {
@@ -102,6 +135,16 @@ namespace Turtlz_Launcher
                     }
 
                 }
+                else
+                {
+
+                }
+            }
+            else
+            {
+                CDe.Visibility = Visibility.Collapsed;
+                CGet.Visibility = Visibility.Visible;
+                COff.Visibility = Visibility.Collapsed;
             }
         }
 
@@ -146,16 +189,25 @@ namespace Turtlz_Launcher
                     txtServ.Text = "turtlzNetwork.aternos.me";
                     stat = new MCStatusEx("turtlzNetwork.aternos.me", 25565);
                 }
-                if(m.Header.ToString() == "Custom")
+                if (m.Header.ToString() == "Custom")
                 {
                     stat = null;
                     btnServCusOK.Visibility = Visibility.Visible;
                     btnServOk.Visibility = Visibility.Collapsed;
+                    btnServNone.Visibility = Visibility.Collapsed;
                     iscus = true;
+                }
+                else if (m.Header.ToString() == "None")
+                {
+                    iscus = null;
+                    btnServCusOK.Visibility = Visibility.Collapsed;
+                    btnServOk.Visibility = Visibility.Collapsed;
+                    btnServNone.Visibility = Visibility.Visible;
                 }
                 else
                 {
                     iscus = false;
+                    btnServNone.Visibility = Visibility.Collapsed;
                     btnServCusOK.Visibility = Visibility.Collapsed;
                     btnServOk.Visibility = Visibility.Visible;
                 }
@@ -170,15 +222,47 @@ namespace Turtlz_Launcher
         private void btnServCusOK_Click(object sender, RoutedEventArgs e)
         {
             vars.Serv = txtxbxServ.Text;
+            try
+            {
+                vars.port = int.Parse(txtbxPort.Text);
+            }
+            catch
+            {
+                MessageBox.Show("Please Enter a valid port");
+                return;
+            }
             stat = null;
             this.Hide();
         }
 
         private void btnServOk_Click(object sender, RoutedEventArgs e)
         {
+            vars.port = 25565;
             vars.Serv = txtServ.Text;
             stat = null;
             this.Hide();
+        }
+
+        private void btnServNone_Click(object sender, RoutedEventArgs e)
+        {
+            vars.port = 25565;
+            vars.Serv = "";
+            stat = null;
+            this.Hide();
+        }
+
+
+        private void txtbxPort_ValueChanged(object sender, TextChangedEventArgs e)
+        {
+            try
+            {
+                stat = new MCStatusEx(txtxbxServ.Text, int.Parse(txtbxPort.Text));
+            }
+            catch
+            {
+
+            }
+            
         }
     }
 }

@@ -45,7 +45,7 @@ namespace Turtlz_Launcher
         {
             Microsoft.Win32.OpenFileDialog openFileDlg = new Microsoft.Win32.OpenFileDialog();
             openFileDlg.Filter = "Options Text File|*.txt";
-            Nullable<bool> result = openFileDlg.ShowDialog();
+            bool? result = openFileDlg.ShowDialog();
             if (result == true)
             {
                 txtPath.Text = openFileDlg.FileName;

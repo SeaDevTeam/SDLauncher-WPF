@@ -59,26 +59,57 @@ namespace Turtlz_Launcher
 
         async void LoadSettings()
         {
+            status.Text = "Loading Settings";
+            UI(false);
+            vars.Serv = Properties.Settings.Default.MCServer;
+            vars.port = Properties.Settings.Default.MCport;
             switchAutoLogin.IsOn = Properties.Settings.Default.autologin;
             if (!string.IsNullOrEmpty(Properties.Settings.Default.MCPath))
             {
 
                 var defaultpath = new MinecraftPath(Properties.Settings.Default.MCPath);
-                await initializeLauncher(defaultpath);
+                try
+                {
+                    await initializeLauncher(defaultpath);
+                }
+                catch (Exception ex)
+                {
+                    if (MessageBox.Show("Error occurred when trying to initialize the launcher, Do you want to restart the app ?" + Environment.NewLine + ex.Message + Environment.NewLine + "It says your internet could not make a launch option with the path, Can't connect to mojang servers", "Error", MessageBoxButton.YesNo, MessageBoxImage.Error) == MessageBoxResult.Yes)
+                    {
+                        Process.Start(Process.GetCurrentProcess().MainModule.FileName);
+                        Application.Current.Shutdown();
+                    }
+                    Application.Current.Shutdown();
+                }
             }
             else
             {
                 var defaultpath = new MinecraftPath(MinecraftPath.GetOSDefaultPath());
-                await initializeLauncher(defaultpath);
+                try
+                {
+                    await initializeLauncher(defaultpath);
+                }
+                catch (Exception ex)
+                {
+                    if (MessageBox.Show("Error occurred when trying to initialize the launcher, Do you want to restart the app ?" + Environment.NewLine + ex.Message + Environment.NewLine + "It says your internet could not make a launch option with the path, Can't connect to mojang servers", "Error", MessageBoxButton.YesNo, MessageBoxImage.Error) == MessageBoxResult.Yes)
+                    {
+                        Process.Start(Process.GetCurrentProcess().MainModule.FileName);
+                        Application.Current.Shutdown();
+                    }
+                    Application.Current.Shutdown();
+
+                }
             }
-            UI(false);
             status.Text = "Intializing RAM";
             var computerMemory = Util.GetMemoryMb();
             if (computerMemory == null)
             {
-                MessageBox.Show("Failed to get computer memory");
-                this.Close();
-                return;
+                if (MessageBox.Show("Error occurred when trying to Getting the RAM of the PC, Do you want to restart ?", "Error", MessageBoxButton.YesNo, MessageBoxImage.Error) == MessageBoxResult.Yes)
+                {
+                    Process.Start(Process.GetCurrentProcess().MainModule.FileName);
+                    Application.Current.Shutdown();
+                }
+                Application.Current.Shutdown();
             }
 
             var max = computerMemory / 2.5;
@@ -110,7 +141,6 @@ namespace Turtlz_Launcher
                 sliderRAM.Value = (long)(max / 2);
             }
             status.Text = "Ready";
-            UI(true);
             switchRPC.IsOn = Properties.Settings.Default.UseDiscordRPC;
             switchhide.IsOn = Properties.Settings.Default.Autohide;
             txtbxStats.Text = Properties.Settings.Default.RPCStats;
@@ -122,32 +152,14 @@ namespace Turtlz_Launcher
                 btnMCVer.Content = Properties.Settings.Default.CurrentVer;
                 cmbxVer.Text = Properties.Settings.Default.CurrentVer;
             }
+            status.Text = "Ready";
+            UI(true);
+            LoadLogs();
         }
         public MainWindow()
         {
             InitializeComponent();
-            if (Properties.Settings.Default.autologin)
-            {
-                if (Properties.Settings.Default.session != null)
-                {
-                    vars.session = Properties.Settings.Default.session;
-                    vars.UserName = Properties.Settings.Default.session.Username;
-                }
-                else
-                {
-                    var logindialog = new Login();
-                    logindialog.IsPrimaryButtonEnabled = false;
-                    logindialog.IsSecondaryButtonEnabled = false;
-                    logindialog.ShowAsync();
-                }
-            }
-            else
-            {
-                var logindialog = new Login();
-                logindialog.IsPrimaryButtonEnabled = false;
-                logindialog.IsSecondaryButtonEnabled = false;
-                logindialog.ShowAsync();
-            }
+            LoadSettings();
             timer = new System.Windows.Threading.DispatcherTimer();
             timer.Tick += Timer1_Tick;
             timer.Interval = new TimeSpan(0, 0, 0, 0, 10);
@@ -179,7 +191,7 @@ namespace Turtlz_Launcher
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Getting changelogs faild " + ex.Message);
+                MessageBox.Show("Getting changelogs failed " + Environment.NewLine + ex.Message);
             }
             status.Text = "Ready";
         }
@@ -187,23 +199,23 @@ namespace Turtlz_Launcher
         {
             System.Windows.Forms.WebBrowser wb = new System.Windows.Forms.WebBrowser();
             wb.Navigate("about:blank");
-            wb.Document.Write("<p>Never gonna give you up</p>");
+            wb.Document.Write("<p>The Changelogs was on your clipboard</p>");
             wb.Document.ExecCommand("SelectAll", false, null);
             wb.Document.ExecCommand("Copy", false, null);
             wb.Dispose();
 
         }
-        void LoadLogsnext(string body , string ver)
+        void LoadLogsnext(string body, string ver)
         {
             status.Text = "Fletching: v" + ver;
             System.Windows.Forms.WebBrowser wb = new System.Windows.Forms.WebBrowser();
             wb.Navigate("about:blank");
             var fullbody = "<style>" + Environment.NewLine + "p,h1,li,span,body,html {" + Environment.NewLine + "font-family:\"Segoe UI\";" + Environment.NewLine + "}" + Environment.NewLine + "</style>" + Environment.NewLine + "<body>" + "<h1>Version " + ver + "</h1>" + body + "</body>";
-            wb.Document.Write(fullbody.Replace("h1","h2").ToString());
+            wb.Document.Write(fullbody.Replace("h1", "h2").ToString());
             wb.Document.ExecCommand("SelectAll", false, null);
             wb.Document.ExecCommand("Copy", false, null);
-
             richtxt.Paste();
+            wb.Dispose();
             TextRange allText = new TextRange(richtxt.Document.ContentStart, richtxt.Document.ContentEnd);
             allText.ApplyPropertyValue(RichTextBox.FontFamilyProperty, new FontFamily("Segoe UI"));
             allText.ApplyPropertyValue(RichTextBox.ForegroundProperty, status.Foreground);
@@ -213,7 +225,21 @@ namespace Turtlz_Launcher
         {
             if (!string.IsNullOrEmpty(vars.Serv))
             {
-                join2serv.Content = vars.Serv;
+                if (vars.port != null)
+                {
+                    if (vars.port == 25565)
+                    {
+                        join2serv.Content = vars.Serv;
+                    }
+                    else
+                    {
+                        join2serv.Content = vars.Serv + ":" + vars.port;
+                    }
+                }
+            }
+            else
+            {
+                join2serv.Content = "Servers";
             }
             lblRam.Text = "Ram: " + ((int)sliderRAM.Value).ToString() + " MB";
             if (vars.session != null)
@@ -223,7 +249,6 @@ namespace Turtlz_Launcher
                     lblWelcome.Text = "Weclome! " + vars.UserName;
                     prfPic.DisplayName = vars.UserName;
                     prpFly.DisplayName = vars.UserName;
-                    txtlogin.Text = vars.UserName;
                     btnLogin.Content = "Change Account";
                     lbluserFly.Text = vars.UserName;
                 }
@@ -237,7 +262,6 @@ namespace Turtlz_Launcher
                 lblWelcome.Text = "Weclome!";
                 prfPic.DisplayName = "";
                 prpFly.DisplayName = "";
-                txtlogin.Text = "Login";
                 lbluserFly.Text = "Login";
                 btnLogin.Content = "Login";
 
@@ -259,8 +283,28 @@ namespace Turtlz_Launcher
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             ModernWpf.ThemeManager.Current.ApplicationTheme = ModernWpf.ApplicationTheme.Dark;
-            LoadSettings();
-            LoadLogs();
+            if (Properties.Settings.Default.autologin)
+            {
+                if (Properties.Settings.Default.session != null)
+                {
+                    vars.session = Properties.Settings.Default.session;
+                    vars.UserName = Properties.Settings.Default.session.Username;
+                }
+                else
+                {
+                    var logindialog = new Login();
+                    logindialog.IsPrimaryButtonEnabled = false;
+                    logindialog.IsSecondaryButtonEnabled = false;
+                    logindialog.ShowAsync();
+                }
+            }
+            else
+            {
+                var logindialog = new Login();
+                logindialog.IsPrimaryButtonEnabled = false;
+                logindialog.IsSecondaryButtonEnabled = false;
+                logindialog.ShowAsync();
+            }
         }
         // Event Handler. Show download progress
         private void Launcher_ProgressChanged(object sender, ProgressChangedEventArgs e)
@@ -278,6 +322,7 @@ namespace Turtlz_Launcher
         }
         private async Task initializeLauncher(MinecraftPath path)
         {
+            status.Text = "Initializing...";
             txtMCPath.Text = path.BasePath;
             gamepath = path;
 
@@ -319,7 +364,7 @@ namespace Turtlz_Launcher
             UI(false);
             if (vars.session == null)
             {
-                MessageBox.Show("Login First");
+                MessageBox.Show("Please login");
                 var logindialog = new Login();
                 logindialog.IsPrimaryButtonEnabled = false;
                 logindialog.IsSecondaryButtonEnabled = false;
@@ -331,7 +376,7 @@ namespace Turtlz_Launcher
             {
                 if (btnMCVer.Content.ToString() == "Version")
                 {
-                    MessageBox.Show("Select Version");
+                    MessageBox.Show("Select a version");
                     UI(true);
                     return;
                 }
@@ -344,7 +389,7 @@ namespace Turtlz_Launcher
             {
                 if (string.IsNullOrEmpty(cmbxVer.Text.ToString()))
                 {
-                    MessageBox.Show("Select Version");
+                    MessageBox.Show("Select a version");
                     UI(true);
                     return;
                 }
@@ -358,9 +403,9 @@ namespace Turtlz_Launcher
 
             if (!string.IsNullOrEmpty(vars.Serv))
             {
-                ip = "";
+                ip = vars.Serv;
             }
-                isGameRuns = true;
+            isGameRuns = true;
             try
             {
                 // create LaunchOption
@@ -385,9 +430,10 @@ namespace Turtlz_Launcher
                 {
                     launchOption.JavaPath = javapath;
                 }
-                //                if (!string.IsNullOrEmpty(Txt_ServerPort.Text))
-                //                  launchOption.ServerPort = int.Parse(Txt_ServerPort.Text);
-
+                if (vars.port != null && vars.port != 25565)
+                {
+                    launchOption.ServerPort = (int)vars.port;
+                }
                 //      if (!string.IsNullOrEmpty(Txt_ScWd.Text) && !string.IsNullOrEmpty(Txt_ScHt.Text))
                 //    {
                 //      launchOption.ScreenHeight = int.Parse(Txt_ScHt.Text);
@@ -410,7 +456,7 @@ namespace Turtlz_Launcher
                     launcher.GameFileCheckers.AssetFileChecker = null;
 
 
-                if (launcher.GameFileCheckers.AssetFileChecker == null)
+                    if (launcher.GameFileCheckers.AssetFileChecker == null)
                         launcher.GameFileCheckers.AssetFileChecker = new AssetChecker();
                 }
                 // check file hash or don't check
@@ -464,6 +510,10 @@ namespace Turtlz_Launcher
             pnlLaunch.IsEnabled = value;
             sliderRAM.IsEnabled = value;
             swtchVer.IsEnabled = value;
+            btnOpt.IsEnabled = value;
+            swtchVer.IsEnabled = value;
+            btnChangeMCpath.IsEnabled = value;
+            join2serv.IsEnabled = value;
             cbSkipAssetsDownload.IsEnabled = value;
             cbSkipHashCheck.IsEnabled = value;
         }
@@ -598,6 +648,8 @@ namespace Turtlz_Launcher
             Properties.Settings.Default.UseDiscordRPC = switchRPC.IsOn;
             Properties.Settings.Default.Autohide = switchhide.IsOn;
             Properties.Settings.Default.RPCStats = txtbxStats.Text;
+            Properties.Settings.Default.MCServer = vars.Serv;
+            Properties.Settings.Default.MCport = vars.port;
             Properties.Settings.Default.CurrentVer = MCver;
             if (vars.session != null)
             {
@@ -704,7 +756,7 @@ namespace Turtlz_Launcher
             RPCclient.Logger = new ConsoleLogger() { Level = LogLevel.Warning };
             RPCclient.OnReady += (sender, e) =>
             {
-                Debug.WriteLine("RPC Received Ready from user "+ e.User.Username);
+                Debug.WriteLine("RPC Received Ready from user " + e.User.Username);
             };
 
             RPCclient.OnPresenceUpdate += (sender, e) =>
@@ -835,6 +887,18 @@ namespace Turtlz_Launcher
         private void join2serv_Click(object sender, RoutedEventArgs e)
         {
             new openToServ().ShowAsync();
+        }
+
+        private void btnMCKill_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                MCprocess.Kill();
+            }
+            catch (Exception ex)
+            {
+                _ = System.Windows.Forms.MessageBox.Show("Failed to kill process (No process found)" + Environment.NewLine + ex.Message, "Error", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error, System.Windows.Forms.MessageBoxDefaultButton.Button1);
+            }
         }
     }
 }

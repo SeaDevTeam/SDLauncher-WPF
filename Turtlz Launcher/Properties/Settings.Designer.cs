@@ -153,5 +153,29 @@ namespace Turtlz_Launcher.Properties {
                 this["RPCStats"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string MCServer {
+            get {
+                return ((string)(this["MCServer"]));
+            }
+            set {
+                this["MCServer"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("25565")]
+        public int MCport {
+            get {
+                return ((int)(this["MCport"]));
+            }
+            set {
+                this["MCport"] = value;
+            }
+        }
     }
 }

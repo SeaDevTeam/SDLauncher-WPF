@@ -12,7 +12,7 @@ namespace Turtlz_Launcher
         public string MaxPlayers { get; set; }
         public string Players { get; set; }
         public string Latency { get; set; }
-        public Nullable<bool> Online { get; set; }
+        public bool? Online { get; set; }
         public static MineStat mscplex;
         public MCStatusEx(string ip, int port)
         {

@@ -41,5 +41,8 @@
     <Setting Name="MCport" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">25565</Value>
     </Setting>
+    <Setting Name="StringVer" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
   </Settings>
 </SettingsFile>

@@ -45,6 +45,7 @@ namespace Turtlz_Launcher
             while (logQueue.TryDequeue(out msg))
             {
                 txtLog.Text += msg + "\n";
+                scrl.ScrollToEnd();
             }
         }
     }

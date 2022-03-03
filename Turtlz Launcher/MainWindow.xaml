@@ -96,7 +96,7 @@
                 </StackPanel>
             </DockPanel>
         </Grid>
-        <ui:SplitView Grid.Row="1" PanePlacement="Right" OpenPaneLength="360" Name="SettingsPane" PaneBackground="Transparent">
+        <ui:SplitView IsPaneOpen="True" Grid.Row="1" PanePlacement="Right" OpenPaneLength="360" Name="SettingsPane" PaneBackground="Transparent">
             <ui:SplitView.Pane>
                 <ui:ScrollViewerEx>
                 <Grid Background="{fw:AcrylicBrush TintOpacity=0.98, TintColor=#1E1E1E,NoiseOpacity=0.025}"  >
@@ -119,8 +119,9 @@
                                     <TextBox Width="200" IsEnabled="True" IsReadOnly="True" Name="txtMCPath"/>
                                     <Button Margin="5,0,0,0" Background="{DynamicResource btnBackground}" Content="Change" x:Name="btnChangeMCpath" Click="btnChangeMCpath_Click"/>
                                 </StackPanel>
-                                <CheckBox Content="Use advanced versions selector" Margin="0,10,0,0" FontFamily="Segoe UI" FontSize="14" x:Name="swtchVer"/>
-                                <Button HorizontalAlignment="Left" x:Name="btnOpt" Click="btnOpt_Click" Background="{DynamicResource btnBackground}" Margin="0,5,0,0" Content="options.txt"/>
+                                <CheckBox Content="Use old versions selector" Margin="0,10,0,0" FontFamily="Segoe UI" FontSize="14" x:Name="swtchVer"/>
+                                <Button HorizontalAlignment="Left" x:Name="btnOpt" Click="btnOpt_Click" Background="{DynamicResource btnBackground}" Margin="0,5,0,0" Content="Options.txt"/>
+                                <Button HorizontalAlignment="Left" x:Name="btnRefresh" Click="btnRefresh_Click" Background="{DynamicResource btnBackground}" Margin="0,5,0,0" Content="Refresh Available Versions"/>
                                 <Button HorizontalAlignment="Left" x:Name="btnMCKill" Click="btnMCKill_Click" Background="{DynamicResource btnNobackground}" Margin="0,5,0,0" Content="Instant Kill"/>
                             </StackPanel>
                         </Border>
@@ -137,7 +138,8 @@
                                 <ui:ToggleSwitch x:Name="switchRPC" Header="Show Discord activity"/>
                                 <ui:ToggleSwitch x:Name="switchhide" Header="Automatically hide when minecraft starts"/>
                                 <ui:ToggleSwitch x:Name="switchAutoLogin" Header="Autologin when app starts"/>
-                            </StackPanel>
+                                    <Button Content="About this app" x:Name="btnAbout" Click="btnAbout_Click" HorizontalAlignment="Left" Background="{DynamicResource btnBackground}"/>
+                                </StackPanel>
                         </Border>
                     </StackPanel>
                 </Grid>
@@ -148,7 +150,7 @@
                     <TextBlock Margin="10" x:Name="lblWelcome" HorizontalAlignment="Left" FontSize="35" Text="Welcome!" FontFamily="pack://application:,,,/Fonts/#Pixeboy" />
                 </StackPanel>
                 <ui:ScrollViewerEx Margin="0,50,0,125">
-                    <RichTextBox Background="{fw:AcrylicBrush TargetName=Grid, TintColor=Black,TintOpacity=0.35,NoiseOpacity=0.05}" Name="richtxt" FontFamily="Segoe UI" IsEnabled="False" Margin="10,0,15,0">
+                    <RichTextBox Background="{fw:AcrylicBrush TargetName=Grid, TintColor=Black,TintOpacity=0.45,NoiseOpacity=0.02}" Name="richtxt" FontFamily="Segoe UI" IsEnabled="False" Margin="10,0,15,0">
                         <RichTextBox.Resources>
                             <Style TargetType="Border">
                                 <Setter Property="CornerRadius" Value="15"/>
@@ -175,21 +177,29 @@
                                 <MenuItem Click="MenuItem_Click" x:Name="mLatestsnap" Header="Latest Snapshot"/>
                                 <MenuItem Header="1.18">
                                     <MenuItem Click="MenuItem_Click" Header="1.18"/>
-                                    <MenuItem Click="MenuItem_Click"  Header="1.18.1"/>
+                                    <MenuItem Click="MenuItem_Click" Header="1.18.2"/>
+                                    <MenuItem Header="1.18.1">
+                                        <MenuItem Click="MenuItem_Click"  Header="1.18.1"/>
+                                        <MenuItem Click="MenuItem_Click"  Header="Fabric 1.18.1"/>
+                                        <MenuItem Click="MenuItem_Click"  Header="OptiFine 1.18.1"/>
+                                    </MenuItem>
                                 </MenuItem>
                                 <MenuItem Header="1.17">
                                     <MenuItem Click="MenuItem_Click"  Header="1.17"/>
                                     <MenuItem Header="1.17.1">
                                         <MenuItem Click="MenuItem_Click"  Header="1.17.1"/>
-                                        <MenuItem Click="MenuItem_Click"  Header="ForgeOptiFine 1.17.1"/>
+                                        <MenuItem Click="MenuItem_Click"  Header="Fabric 1.17.1"/>
                                         <MenuItem Click="MenuItem_Click"  Header="OptiFine 1.17.1"/>
                                     </MenuItem>
                                 </MenuItem>
                                 <MenuItem Header="1.16">
                                     <MenuItem Click="MenuItem_Click"  Header="1.16"/>
                                     <MenuItem Click="MenuItem_Click"  Header="1.16.1"/>
-                                    <MenuItem Click="MenuItem_Click"  Header="1.16.5"/>
-                                    <MenuItem Click="MenuItem_Click"  Header="OptiFine 1.16.5"/>
+                                    <MenuItem Header="1.16.5">
+                                        <MenuItem Click="MenuItem_Click"  Header="1.16.5"/>
+                                        <MenuItem Click="MenuItem_Click"  Header="Fabric 1.16.5"/>
+                                        <MenuItem Click="MenuItem_Click"  Header="OptiFine 1.16.5"/>
+                                    </MenuItem>
                                 </MenuItem>
                                 <MenuItem Header="1.12">
                                     <MenuItem Click="MenuItem_Click"  Header="1.12"/>

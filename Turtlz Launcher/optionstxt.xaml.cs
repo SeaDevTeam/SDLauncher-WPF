@@ -26,7 +26,7 @@ namespace Turtlz_Launcher
         public optionstxt(string path)
         {
             Path = path;
-           InitializeComponent();
+            InitializeComponent();
         }
 
         public static ObservableCollection<LVItems> items = new ObservableCollection<LVItems>();
@@ -89,7 +89,7 @@ namespace Turtlz_Launcher
         private void btnEditOK_Click(object sender, RoutedEventArgs e)
         {
             if (txtKey.IsEnabled)
-            dataGrid.Items.Add(new LVItems { key = txtKey.Text, val = txtVal.Text});
+                dataGrid.Items.Add(new LVItems { key = txtKey.Text, val = txtVal.Text });
             else
                 foreach (LVItems item in dataGrid.ItemsSource)
                 {
@@ -143,7 +143,7 @@ namespace Turtlz_Launcher
 
         private void dataGrid_SelectedCellsChanged(object sender, SelectedCellsChangedEventArgs e)
         {
-            if(dataGrid.SelectedItems.Count > 0)
+            if (dataGrid.SelectedItems.Count > 0)
             {
                 btnDel.IsEnabled = true;
             }

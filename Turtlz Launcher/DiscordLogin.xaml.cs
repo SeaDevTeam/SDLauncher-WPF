@@ -26,7 +26,7 @@ namespace Turtlz_Launcher
 
         private void ww2_SourceUpdated(object sender, DataTransferEventArgs e)
         {
-            if(ww2.Source != new Uri("https://discord.com/api/oauth2/authorize?client_id=943158277678714900&redirect_uri=http%3A%2F%2Fhimathsuniverse.rf.gd%2F&response_type=code&scope=rpc"))
+            if (ww2.Source != new Uri("https://discord.com/api/oauth2/authorize?client_id=943158277678714900&redirect_uri=http%3A%2F%2Fhimathsuniverse.rf.gd%2F&response_type=code&scope=rpc"))
             {
                 try
                 {
@@ -34,7 +34,7 @@ namespace Turtlz_Launcher
                     vars.DiscordToken = q["code"];
                     this.Close();
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     vars.DiscordToken = "";
 

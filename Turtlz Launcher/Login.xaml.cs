@@ -60,10 +60,10 @@ namespace Turtlz_Launcher
                 {
                     MessageBox.Show("Login Success"); // Success Login
 
-                        Invoke(new Action(() =>
-                    {
-                        UpdateSession(result.Session);
-                    }));
+                    Invoke(new Action(() =>
+                {
+                    UpdateSession(result.Session);
+                }));
                 }
                 else
                 {
@@ -104,7 +104,7 @@ namespace Turtlz_Launcher
             {
                 if (txtbxOffUsername.Text.Split(delimiters, StringSplitOptions.RemoveEmptyEntries).Length == 1)
                 {
-                    UpdateSession(MSession.GetOfflineSession(txtbxOffUsername.Text.Replace(" ","").ToString()));
+                    UpdateSession(MSession.GetOfflineSession(txtbxOffUsername.Text.Replace(" ", "").ToString()));
                 }
                 else
                 {
@@ -166,9 +166,9 @@ namespace Turtlz_Launcher
                     ));
                     UpdateSession(result.Session);
                 });
-                th.Start();
+            th.Start();
 
-            
+
         }
 
         private void MenuItem_Click_1(object sender, RoutedEventArgs e)
@@ -176,34 +176,14 @@ namespace Turtlz_Launcher
             mojang.IsEnabled = false;
             offline.IsEnabled = false;
 
-                var th = new Thread(() =>
+            var th = new Thread(() =>
+            {
+                var result = login.TryAutoLoginFromMojangLauncher();
+
+                if (result.Result != MLoginResult.Success)
                 {
-                    var result = login.TryAutoLoginFromMojangLauncher();
+                    MessageBox.Show($"Failed to AutoLogin : {result.Result}\n{result.ErrorMessage}");
 
-                    if (result.Result != MLoginResult.Success)
-                    {
-                        MessageBox.Show($"Failed to AutoLogin : {result.Result}\n{result.ErrorMessage}");
-
-                        offline.Dispatcher.Invoke(
-                        System.Windows.Threading.DispatcherPriority.Normal,
-                        new Action(
-                        delegate ()
-                        {
-                            offline.IsEnabled = true;
-                        }
-                        ));
-                        mojang.Dispatcher.Invoke(
-                        System.Windows.Threading.DispatcherPriority.Normal,
-                        new Action(
-                        delegate ()
-                        {
-                            mojang.IsEnabled = true;
-                        }
-                        ));
-                        return;
-                    }
-
-                    MessageBox.Show("Auto Login Success!");
                     offline.Dispatcher.Invoke(
                     System.Windows.Threading.DispatcherPriority.Normal,
                     new Action(
@@ -220,9 +200,29 @@ namespace Turtlz_Launcher
                         mojang.IsEnabled = true;
                     }
                     ));
-                    UpdateSession(result.Session);
-                });
-                th.Start();
+                    return;
+                }
+
+                MessageBox.Show("Auto Login Success!");
+                offline.Dispatcher.Invoke(
+                System.Windows.Threading.DispatcherPriority.Normal,
+                new Action(
+                delegate ()
+                {
+                    offline.IsEnabled = true;
+                }
+                ));
+                mojang.Dispatcher.Invoke(
+                System.Windows.Threading.DispatcherPriority.Normal,
+                new Action(
+                delegate ()
+                {
+                    mojang.IsEnabled = true;
+                }
+                ));
+                UpdateSession(result.Session);
+            });
+            th.Start();
 
 
         }
@@ -267,14 +267,14 @@ namespace Turtlz_Launcher
             }
         }
 
-        
+
         private void btnMSLogin_Click(object sender, RoutedEventArgs e)
         {
             MicrosoftLoginWindow loginWindow = new MicrosoftLoginWindow();
             loginWindow.Title = "Login with Microsoft Account";
             loginWindow.Height = 800;
             loginWindow.ShowInTaskbar = false;
-            loginWindow.WindowStyle = WindowStyle.ToolWindow; 
+            loginWindow.WindowStyle = WindowStyle.ToolWindow;
             loginWindow.WindowStartupLocation = WindowStartupLocation.CenterScreen;
             MSession session = loginWindow.ShowLoginDialog();
             if (session != null)
@@ -290,7 +290,7 @@ namespace Turtlz_Launcher
 
         private void btnMSLogout_Click(object sender, RoutedEventArgs e)
         {
-            
+
             MicrosoftLoginWindow loginWindow = new MicrosoftLoginWindow();
             loginWindow.Height = 800;
             loginWindow.ShowInTaskbar = false;
@@ -307,7 +307,7 @@ namespace Turtlz_Launcher
 
         private void txtbxOffUsername_KeyDown(object sender, KeyEventArgs e)
         {
-            if(e.Key == Key.Enter)
+            if (e.Key == Key.Enter)
             {
                 btnOfflineLog_Click(sender, e);
             }

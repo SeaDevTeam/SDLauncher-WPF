@@ -26,6 +26,8 @@ using CmlLib.Utils;
 using System.IO;
 using DiscordRPC;
 using DiscordRPC.Logging;
+using CmlLib.Core.Installer.FabricMC;
+using System.IO.Compression;
 //using Discord;
 //using Discord.Net;
 //using Discord.Webhook;
@@ -49,12 +51,14 @@ namespace Turtlz_Launcher
         readonly MSession session;
         MinecraftPath gamepath;
         string javapath;
+        string launchVer;
         public static bool isGameRuns;
         private System.Windows.Forms.NotifyIcon m_notifyIcon;
         GameLog logPage;
         public static string currentVer;
         int minRam;
         int VerSelectAdvaced;
+        bool UIstate = true;
         Changelogs logs;
 
         async void LoadSettings()
@@ -145,6 +149,7 @@ namespace Turtlz_Launcher
             switchhide.IsOn = Properties.Settings.Default.Autohide;
             txtbxStats.Text = Properties.Settings.Default.RPCStats;
             cbSkipAssetsDownload.IsChecked = Properties.Settings.Default.SkipAssetsDown;
+            launchVer = Properties.Settings.Default.StringVer;
             cbSkipHashCheck.IsChecked = Properties.Settings.Default.SkipHashCheck;
             swtchVer.IsChecked = Properties.Settings.Default.UseAdvacedVer;
             if (!string.IsNullOrEmpty(Properties.Settings.Default.CurrentVer))
@@ -182,7 +187,11 @@ namespace Turtlz_Launcher
             try
             {
                 logs = await Changelogs.GetChangelogs();
-                LoadLogsnext(await logs.GetChangelogHtml(launcher.Versions.LatestSnapshotVersion.Name), "1.18.2 Pre-release");
+                if (launcher.Versions.LatestSnapshotVersion.Name != launcher.Versions.LatestReleaseVersion.Name)
+                {
+                    LoadLogsnext(await logs.GetChangelogHtml(launcher.Versions.LatestSnapshotVersion.Name), launcher.Versions.LatestSnapshotVersion.Name);
+                }
+                LoadLogsnext(await logs.GetChangelogHtml("1.18.2"), "1.18.2");
                 LoadLogsnext(await logs.GetChangelogHtml("1.18.1"), "1.18.1");
                 LoadLogsnext(await logs.GetChangelogHtml("1.18"), "1.18");
                 LoadLogsnext(await logs.GetChangelogHtml("1.17.1"), "1.7.1");
@@ -322,6 +331,7 @@ namespace Turtlz_Launcher
         }
         private async Task initializeLauncher(MinecraftPath path)
         {
+            UI(false);
             status.Text = "Initializing...";
             txtMCPath.Text = path.BasePath;
             gamepath = path;
@@ -330,16 +340,29 @@ namespace Turtlz_Launcher
             launcher.FileChanged += Launcher_FileChanged;
             launcher.ProgressChanged += Launcher_ProgressChanged;
             await refreshVersions(null);
+            UI(true);
         }
 
+        public static CmlLib.Core.Version.MVersionCollection mcVers;
+        public static CmlLib.Core.Version.MVersionCollection mcFabricVers;
         private async Task refreshVersions(string showVersion)
         {
+            var lastUIsts = UIstate;
+            UI(false);
+            status.Text = "Getting Available Versions";
             cmbxVer.Items.Clear();
+            btnMCVer.Content = "Version";
+            launchVer = "";
+            mcVers = await launcher.GetAllVersionsAsync();
 
-            var versions = await launcher.GetAllVersionsAsync();
+            mcFabricVers = await new FabricVersionLoader().GetVersionMetadatasAsync();
 
             bool showVersionExist = false;
-            foreach (var item in versions)
+            foreach (var item in mcFabricVers)
+            {
+                cmbxVer.Items.Add(item.Name);
+            }
+            foreach (var item in mcVers)
             {
                 if (showVersion != null && item.Name == showVersion)
                 {
@@ -356,6 +379,11 @@ namespace Turtlz_Launcher
             else
             {
                 cmbxVer.Text = showVersion;
+            }
+            status.Text = "Ready";
+            if (lastUIsts)
+            {
+                UI(true);
             }
         }
         string MCver = "";
@@ -382,7 +410,7 @@ namespace Turtlz_Launcher
                 }
                 else
                 {
-                    MCver = btnMCVer.Content.ToString();
+                    MCver = launchVer;
                 }
             }
             else if (VerSelectAdvaced == 1)
@@ -500,6 +528,7 @@ namespace Turtlz_Launcher
                     logPage.Hide();
 
                 logPage = new GameLog();
+                logPage.CloseButtonText = "Close";
                 logPage.ShowAsync();
 
                 // enable ui
@@ -507,10 +536,12 @@ namespace Turtlz_Launcher
         }
         private void UI(bool value)
         {
+            UIstate = value;
             pnlLaunch.IsEnabled = value;
             sliderRAM.IsEnabled = value;
             swtchVer.IsEnabled = value;
             btnOpt.IsEnabled = value;
+            btnRefresh.IsEnabled = value;
             swtchVer.IsEnabled = value;
             btnChangeMCpath.IsEnabled = value;
             join2serv.IsEnabled = value;
@@ -603,24 +634,165 @@ namespace Turtlz_Launcher
             }
         }
 
-        private void VerMenuItem_ClickEx(MenuItem item)
+        private async void VerMenuItem_ClickEx(MenuItem item)
         {
             if (item.Header.ToString() == "Latest")
             {
                 btnMCVer.Content = launcher.Versions?.LatestReleaseVersion?.Name;
+                launchVer = btnMCVer.Content.ToString();
                 return;
             }
             else if (item.Header.ToString() == "Latest Snapshot")
             {
                 btnMCVer.Content = launcher.Versions?.LatestSnapshotVersion?.Name;
+                launchVer = btnMCVer.Content.ToString();
                 return;
+            }
+            else if (item.Header.ToString() == "OptiFine 1.18.1")
+            {
+                CheckOptiFine("1.18.1", "1.18.1-OptiFine_HD_U_H4", item);
+            }
+            else if (item.Header.ToString() == "OptiFine 1.17.1")
+            {
+                CheckOptiFine("1.17.1", "1.17.1-OptiFine_HD_U_H1", item);
+            }
+            else if (item.Header.ToString() == "OptiFine 1.16.5")
+            {
+                CheckOptiFine("1.16.5", "OptiFine 1.16.5", item);
+            }
+            else if (item.Header.ToString() == "Fabric 1.18.1")
+            {
+                CheckFabric("1.18.1", "fabric-loader-0.13.3-1.18.1", item);
+            }
+            else if (item.Header.ToString() == "Fabric 1.17.1")
+            {
+                CheckFabric("1.17.1", "fabric-loader-0.13.3-1.17.1", item);
+            }
+            else if (item.Header.ToString() == "Fabric 1.16.5")
+            {
+                CheckFabric("1.16.5", "fabric-loader-0.13.3-1.16.5", item);
             }
             else
             {
                 btnMCVer.Content = item.Header;
+                launchVer = btnMCVer.Content.ToString();
             }
         }
 
+        void CheckFabric(string mcver,string modver, MenuItem mit)
+        {
+            bool exists = false;
+            foreach (var veritem in mcFabricVers)
+            {
+                if (veritem.Name == modver)
+                {
+                    exists = true;
+                }
+            }
+            if (exists)
+            {
+                launchVer = modver;
+                btnMCVer.Content = mit.Header.ToString();
+                status.Text = "Getting Fabric";
+                UI(false);
+                System.Threading.Thread thread = new System.Threading.Thread(async () =>
+                {
+                    var fabric = mcFabricVers.GetVersionMetadata(launchVer);
+                    await fabric.SaveAsync(gamepath);
+                    this.Dispatcher.Invoke(
+                            System.Windows.Threading.DispatcherPriority.Normal,
+                            new Action(
+                            async delegate ()
+                            {
+                                UI(true);
+                                status.Text = "Ready";
+                                await refreshVersions(null);
+                                launchVer = modver;
+                                btnMCVer.Content = mit.Header.ToString();
+                            }
+                            ));
+                });
+                thread.Start();
+                status.Text = "Ready";
+            }
+            else
+            {
+                if (MessageBox.Show("To run " + mit.Header.ToString() +" you need to have installed version " + mcver + ". Vanilla,Do you want to install now ?", "Error", MessageBoxButton.YesNo, MessageBoxImage.Error) == MessageBoxResult.Yes)
+                {
+                    btnMCVer.Content = mcver;
+                    launchVer = mcver;
+                }
+            }
+        }
+
+        void CheckOptiFine(string mcver, string modVer, MenuItem mit)
+        {
+            bool exists = false;
+            foreach (var veritem in mcVers)
+            {
+                if (veritem.Name == modVer)
+                {
+                    exists = true;
+                }
+            }
+            if (exists)
+            {
+                btnMCVer.Content = mit.Header.ToString();
+                launchVer = modVer;
+            }
+            else
+            {
+                if (MessageBox.Show("Couldn't find OptiFine installed on this minecraft. Do you want to download and install from our servers ?", "Error", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                {
+                    if (File.Exists(gamepath.BasePath + "\\versions\\" + mcver + "\\" + mcver + ".jar"))
+                    {
+                        if (Directory.Exists(gamepath.BasePath + "\\libraries\\optifine"))
+                        {
+                            if (mcver == "1.18.1")
+                            {
+                                btnMCVer.Content = mit.Header.ToString();
+                                launchVer = modVer;
+                                isOptiFineRuns = true;
+                                UI(false);
+                                optver = ": " + mcver;
+                                OptFineDownload("https://github.com/Chaniru22/Emerald-Launcher-Public/raw/main/OptiFine-1.18.1.zip", Directory.GetCurrentDirectory() + "\\OptiFine-" + mcver + ".zip", ModType.ver);
+                            }
+                            else if (mcver == "1.17.1")
+                            {
+                                btnMCVer.Content = mit.Header.ToString();
+                                launchVer = modVer;
+                                isOptiFineRuns = true;
+                                UI(false);
+                                optver = ": " + mcver;
+                                OptFineDownload("https://github.com/Chaniru22/Emerald-Launcher-Public/raw/main/OptiFine-1.17.1.zip", Directory.GetCurrentDirectory() + "\\OptiFine-" + mcver + ".zip", ModType.ver);
+                            }
+                            else if (mcver == "1.16.5")
+                            {
+                                btnMCVer.Content = mit.Header.ToString();
+                                launchVer = modVer;
+                                isOptiFineRuns = true;
+                                UI(false);
+                                optver = ": " + mcver;
+                                OptFineDownload("https://github.com/Chaniru22/Emerald-Launcher-Public/raw/main/OptiFine-1.16.5.zip", Directory.GetCurrentDirectory() + "\\OptiFine-" + mcver + ".zip", ModType.ver);
+                            }
+                        }
+                        else
+                        {
+                            isOptiFineRuns = true;
+                            MessageBox.Show("This will download main OptiFine library, Please click again " + mit.Header.ToString() + " (after download and extract the main OptiFine) to install optifine of that version !");
+                            optver = " Lib";
+                            OptFineDownload("https://github.com/Chaniru22/Emerald-Launcher-Public/raw/main/optifine.zip", Directory.GetCurrentDirectory() + "\\OptiFine.zip", ModType.lib); 
+                        }
+                    }
+                    else
+                    {
+                        MessageBox.Show("You have to install & run minecraft version " + mcver + " one time to install OptiFine", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                        btnMCVer.Content = mcver;
+                        launchVer = mcver;
+                    }
+                }
+            }
+        }
         private void MenuItem_Click(object sender, RoutedEventArgs e)
         {
             if (sender is MenuItem m)
@@ -651,6 +823,7 @@ namespace Turtlz_Launcher
             Properties.Settings.Default.MCServer = vars.Serv;
             Properties.Settings.Default.MCport = vars.port;
             Properties.Settings.Default.CurrentVer = MCver;
+            Properties.Settings.Default.StringVer = launchVer;
             if (vars.session != null)
             {
                 Properties.Settings.Default.session = vars.session;
@@ -682,6 +855,20 @@ namespace Turtlz_Launcher
             if (isGameRuns)
             {
                 var result = MessageBox.Show("Minecraft version:" + currentVer + " is running/launching, Do you really want to close?", "Info", MessageBoxButton.YesNo, MessageBoxImage.Information);
+                if (result == MessageBoxResult.Yes)
+                {
+                    m_notifyIcon.Dispose();
+                    m_notifyIcon = null;
+                    SaveSettings();
+                }
+                else
+                {
+                    args.Cancel = true;
+                }
+            }
+            else if (isOptiFineRuns)
+            {
+                var result = MessageBox.Show("OptiFine is installing, Do you really want to close?", "Info", MessageBoxButton.YesNo, MessageBoxImage.Information);
                 if (result == MessageBoxResult.Yes)
                 {
                     m_notifyIcon.Dispose();
@@ -891,6 +1078,9 @@ namespace Turtlz_Launcher
 
         private void btnMCKill_Click(object sender, RoutedEventArgs e)
         {
+            var d = new MessageBoxEx("Hello", "Title", MessageBoxButton.OK, MessageBoxImage.Error);
+            d.Owner = Application.Current.MainWindow;
+            d.ShowDialog();
             try
             {
                 MCprocess.Kill();
@@ -899,6 +1089,90 @@ namespace Turtlz_Launcher
             {
                 _ = System.Windows.Forms.MessageBox.Show("Failed to kill process (No process found)" + Environment.NewLine + ex.Message, "Error", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error, System.Windows.Forms.MessageBoxDefaultButton.Button1);
             }
+        }
+
+        private void btnRefresh_Click(object sender, RoutedEventArgs e)
+        {
+            _ = refreshVersions(null);
+        }
+        enum ModType
+        {
+            lib,
+            ver
+        }
+        string optDir;
+        bool isOptiFineRuns;
+        private void OptFineDownload(string link, string dir, ModType m)
+        {
+            optDir = dir;
+            dwnOptiType = m;
+            UI(false);
+            System.Threading.Thread thread = new System.Threading.Thread(() =>
+            {
+                WebClient client = new WebClient();
+                client.DownloadProgressChanged += new DownloadProgressChangedEventHandler(client_DownloadProgressChanged);
+                client.DownloadFileCompleted += new AsyncCompletedEventHandler(client_DownloadFileCompleted);
+                client.DownloadFileAsync(new Uri(link), dir);
+            });
+            thread.Start();
+        }
+
+        string optver;
+        void client_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
+        {
+            this.Dispatcher.Invoke(
+                    System.Windows.Threading.DispatcherPriority.Normal,
+                    new Action(
+                    delegate ()
+                    {
+                        double bytesIn = double.Parse(e.BytesReceived.ToString());
+                        double totalBytes = double.Parse(e.TotalBytesToReceive.ToString());
+                        double percentage = bytesIn / totalBytes * 100;
+                        status.Text = "Downloading: OptiFine" + optver;
+                        Pb_Progress.Maximum = 100;
+                        Pb_Progress.Value = int.Parse(Math.Truncate(percentage).ToString());
+                    }));
+        }
+        ModType dwnOptiType;
+        void client_DownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
+        {
+            this.Dispatcher.Invoke(
+               System.Windows.Threading.DispatcherPriority.Normal,
+               new Action(
+               delegate ()
+               {
+                   status.Text = "Extracting";
+               }
+               ));
+            if (dwnOptiType == ModType.lib)
+            {
+                ZipFile.ExtractToDirectory(optDir, gamepath.BasePath + @"\libraries", true);
+            }
+            else if (dwnOptiType == ModType.ver)
+            {
+
+                ZipFile.ExtractToDirectory(optDir, gamepath.BasePath + @"\versions", true);
+            }
+            this.Dispatcher.Invoke(
+               System.Windows.Threading.DispatcherPriority.Normal,
+               new Action(
+               async delegate ()
+               {
+                   var oldDisver = btnMCVer.Content.ToString();
+                   var oldVer = launchVer;
+                   await refreshVersions(null);
+                   launchVer = oldVer;
+                   btnMCVer.Content = oldDisver;
+                   status.Text = "Ready";
+                   isOptiFineRuns = false;
+                   UI(true);
+               }
+             ));
+        }
+
+        private void btnAbout_Click(object sender, RoutedEventArgs e)
+        {
+            new aboutPage().ShowAsync();
         }
     }
 }

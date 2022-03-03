@@ -150,40 +150,40 @@ namespace Turtlz_Launcher
 
         private void MenuItem_Click(object sender, RoutedEventArgs e)
         {
-            if(sender is MenuItem m)
+            if (sender is MenuItem m)
             {
                 btnMCServ.Content = m.Header;
-                if(m.Header.ToString() == "Hypixel")
+                if (m.Header.ToString() == "Hypixel")
                 {
                     imgServ.Source = new BitmapImage(new Uri(@"/imgServ/Hypixel.png", UriKind.Relative));
                     txtServ.Text = "mc.hypixel.net";
                     stat = new MCStatusEx("mc.hypixel.net", 25565);
                 }
-                else if(m.Header.ToString() == "Pika Network")
+                else if (m.Header.ToString() == "Pika Network")
                 {
                     imgServ.Source = new BitmapImage(new Uri(@"/imgServ/pika-network.png", UriKind.Relative));
                     txtServ.Text = "play.pika-network.net";
                     stat = new MCStatusEx("play.pika-network.net", 25565);
                 }
-                else if(m.Header.ToString() == "Minemen")
+                else if (m.Header.ToString() == "Minemen")
                 {
                     imgServ.Source = new BitmapImage(new Uri(@"/imgServ/mineman.png", UriKind.Relative));
                     txtServ.Text = "minemen.club";
                     stat = new MCStatusEx("minemen.club", 25565);
                 }
-                else if(m.Header.ToString() == "Bridger")
+                else if (m.Header.ToString() == "Bridger")
                 {
                     imgServ.Source = new BitmapImage(new Uri(@"/imgServ/bridger.png", UriKind.Relative));
                     txtServ.Text = "bridger.land";
                     stat = new MCStatusEx("bridger.land", 25565);
                 }
-                else if(m.Header.ToString() == "Bed Wars Practice")
+                else if (m.Header.ToString() == "Bed Wars Practice")
                 {
                     imgServ.Source = new BitmapImage(new Uri(@"/imgServ/bedwarspractice.png", UriKind.Relative));
                     txtServ.Text = "bedwarspractice.club";
                     stat = new MCStatusEx("bedwarspractice.club", 25565);
                 }
-                else if(m.Header.ToString() == "Turtlz Network")
+                else if (m.Header.ToString() == "Turtlz Network")
                 {
                     imgServ.Source = new BitmapImage(new Uri(@"/imgServ/turtlz.png", UriKind.Relative));
                     txtServ.Text = "turtlzNetwork.aternos.me";
@@ -262,7 +262,7 @@ namespace Turtlz_Launcher
             {
 
             }
-            
+
         }
     }
 }

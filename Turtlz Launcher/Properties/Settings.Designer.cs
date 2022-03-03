@@ -177,5 +177,17 @@ namespace Turtlz_Launcher.Properties {
                 this["MCport"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string StringVer {
+            get {
+                return ((string)(this["StringVer"]));
+            }
+            set {
+                this["StringVer"] = value;
+            }
+        }
     }
 }

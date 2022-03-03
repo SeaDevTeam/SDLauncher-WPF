@@ -1,0 +1,51 @@
+﻿<ui:ContentDialog x:Class="Turtlz_Launcher.aboutPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:Turtlz_Launcher"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="About"
+                  Background="{DynamicResource SolidBackgroundFillColorBaseBrush}"
+      xmlns:fw="clr-namespace:SourceChord.FluentWPF;assembly=FluentWPF"
+      xmlns:ui="http://schemas.modernwpf.com/2019">
+    <ui:ContentDialog.Resources>
+        <LinearGradientBrush x:Key="btnBackground" EndPoint="0.5,1" StartPoint="0.5,0">
+            <GradientStop Color="#FF26BB0E" Offset="0.508"/>
+            <GradientStop Color="#FF11782D" Offset="0.988"/>
+            <GradientStop Color="#FF2B931B" Offset="0.256"/>
+            <GradientStop Color="#FF117A2B" Offset="1"/>
+        </LinearGradientBrush>
+        <LinearGradientBrush x:Key="btnNobackground" EndPoint="0.5,1" StartPoint="0.5,0">
+            <GradientStop Color="#FFEE1D1D" Offset="0.508"/>
+            <GradientStop Color="#FFA63C3C" Offset="0.988"/>
+            <GradientStop Color="#FFAE4E4E" Offset="0.256"/>
+            <GradientStop Color="#FFEE1D1D" Offset="1"/>
+        </LinearGradientBrush>
+    </ui:ContentDialog.Resources>
+
+    <Grid>
+        <StackPanel HorizontalAlignment="Center">
+            <Image Width="75" Source="https://user-images.githubusercontent.com/82730163/156550704-ca06aaef-8f5c-461d-b434-055a0b97d495.png"/>
+            <TextBlock Text="Emerald Launcher" HorizontalAlignment="Center" FontSize="16" FontWeight="SemiBold"/>
+            <TextBlock HorizontalAlignment="Center" x:Name="txtVer" Text="Version 0.7.5"/>
+            <TextBlock HorizontalAlignment="Center" Text="© Copyright 2022 Turtlz Dev Team"/>
+            <TextBlock HorizontalAlignment="Center"><Run>Based on</Run> <Hyperlink x:Name="cml" RequestNavigate="cml_RequestNavigate" Foreground="LightGreen" NavigateUri="https://github.com/CmlLib/CmlLib.Core"> CmlLib</Hyperlink></TextBlock>
+            <Expander Margin="0,5,0,0" Header="Links" HorizontalAlignment="Center">
+                <StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <ui:HyperlinkButton Foreground="LightGreen" NavigateUri="https://github.com/Chaniru22/Emerald-Launcher-Public/" Content="Github"/>
+                        <ui:HyperlinkButton Foreground="LightGreen" NavigateUri="https://github.com/Chaniru22/Emerald-Launcher-Public/issues/new" Margin="5,0,0,0" Content="Repor an issue"/>
+                </StackPanel>
+                    <ui:HyperlinkButton Foreground="LightGreen" NavigateUri="https://discord.gg/CvaDAbJjz9" Content="Discord" HorizontalAlignment="Center"/>
+                </StackPanel>
+            </Expander>
+            <Button Background="{DynamicResource btnBackground}" x:Name="btnUpdate" Click="btnUpdate_Click" Padding="10,7,10,7" Content="Check For Updates" Margin="0,10,0,0" HorizontalAlignment="Center"/>
+            <StackPanel HorizontalAlignment="Center" x:Name="pnlUPUI" Visibility="Collapsed" Margin="0,5,0,0" Orientation="Horizontal">
+                <ui:ProgressRing VerticalAlignment="Center" IsActive="True"/>
+                <TextBlock VerticalAlignment="Center" x:Name="state" Text="Checking For Updates"/>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</ui:ContentDialog>

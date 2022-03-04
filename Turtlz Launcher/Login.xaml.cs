@@ -273,6 +273,7 @@ namespace Turtlz_Launcher
             MicrosoftLoginWindow loginWindow = new MicrosoftLoginWindow();
             loginWindow.Title = "Login with Microsoft Account";
             loginWindow.Height = 800;
+            loginWindow.LoadingText = "Loading";
             loginWindow.ShowInTaskbar = false;
             loginWindow.WindowStyle = WindowStyle.ToolWindow;
             loginWindow.WindowStartupLocation = WindowStartupLocation.CenterScreen;
@@ -296,6 +297,7 @@ namespace Turtlz_Launcher
             loginWindow.ShowInTaskbar = false;
             loginWindow.WindowStyle = WindowStyle.ToolWindow;
             loginWindow.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+            loginWindow.LoadingText = "Loading";
             loginWindow.Title = "Logout";
             loginWindow.ShowLogoutDialog();
         }

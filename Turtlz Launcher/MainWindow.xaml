@@ -160,11 +160,8 @@
                 </ui:ScrollViewerEx>
                 <StackPanel VerticalAlignment="Bottom" x:Name="pnlLaunch" Margin="5,0,5,75" HorizontalAlignment="Right" Orientation="Horizontal">
                     <Button Background="{DynamicResource btnBackground}" Margin="0,0,5,0" x:Name="join2serv" Click="join2serv_Click" Content="Servers"/>
-                    <StackPanel Orientation="Horizontal"  Margin="0,0,5,0" Name="pnlAdVer" Visibility="Collapsed" >
-                        <TextBlock FontSize="14" VerticalAlignment="Center" Text="version"/>
-                        <ComboBox MinWidth="100" x:Name="cmbxVer"/>
-                    </StackPanel>
-                    <ui:DropDownButton Margin="0,0,5,0" Background="{DynamicResource btnBackground}" x:Name="btnMCVer" Content="Version">
+                    <ComboBox Foreground="White" MinWidth="140" x:Name="cmbxVer" IsEditable="True"/>
+                        <ui:DropDownButton Margin="0,0,5,0" Background="{DynamicResource btnBackground}" x:Name="btnMCVer" Content="Version">
 
                         <ui:DropDownButton.Flyout>
                             <ui:MenuFlyout>
@@ -177,7 +174,10 @@
                                 <MenuItem Click="MenuItem_Click" x:Name="mLatestsnap" Header="Latest Snapshot"/>
                                 <MenuItem Header="1.18">
                                     <MenuItem Click="MenuItem_Click" Header="1.18"/>
-                                    <MenuItem Click="MenuItem_Click" Header="1.18.2"/>
+                                    <MenuItem Header="1.18.2">
+                                        <MenuItem Click="MenuItem_Click" Header="1.18.2"/>
+                                        <MenuItem Click="MenuItem_Click" Header="OptiFine 1.18.2"/>
+                                    </MenuItem>
                                     <MenuItem Header="1.18.1">
                                         <MenuItem Click="MenuItem_Click"  Header="1.18.1"/>
                                         <MenuItem Click="MenuItem_Click"  Header="Fabric 1.18.1"/>

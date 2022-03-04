@@ -277,14 +277,14 @@ namespace Turtlz_Launcher
             }
             if (swtchVer.IsChecked == true)
             {
-                pnlAdVer.Visibility = Visibility.Visible;
+                cmbxVer.Visibility = Visibility.Visible;
                 VerSelectAdvaced = 1;
                 btnMCVer.Visibility = Visibility.Collapsed;
             }
             else
             {
                 VerSelectAdvaced = 0;
-                pnlAdVer.Visibility = Visibility.Collapsed;
+                cmbxVer.Visibility = Visibility.Collapsed;
                 btnMCVer.Visibility = Visibility.Visible;
             }
         }
@@ -648,6 +648,10 @@ namespace Turtlz_Launcher
                 launchVer = btnMCVer.Content.ToString();
                 return;
             }
+            else if (item.Header.ToString() == "OptiFine 1.18.2")
+            {
+                CheckOptiFine("1.18.2", "1.18.2-OptiFine_HD_U_H6_pre1", item);
+            }
             else if (item.Header.ToString() == "OptiFine 1.18.1")
             {
                 CheckOptiFine("1.18.1", "1.18.1-OptiFine_HD_U_H4", item);
@@ -748,6 +752,15 @@ namespace Turtlz_Launcher
                     {
                         if (Directory.Exists(gamepath.BasePath + "\\libraries\\optifine"))
                         {
+                            if (mcver == "1.18.2")
+                            {
+                                btnMCVer.Content = mit.Header.ToString();
+                                launchVer = modVer;
+                                isOptiFineRuns = true;
+                                UI(false);
+                                optver = ": " + mcver;
+                                OptFineDownload("https://github.com/Chaniru22/Emerald-Launcher-Public/raw/main/OptiFine-1.18.2.zip", Directory.GetCurrentDirectory() + "\\OptiFine-" + mcver + ".zip", ModType.ver);
+                            }
                             if (mcver == "1.18.1")
                             {
                                 btnMCVer.Content = mit.Header.ToString();

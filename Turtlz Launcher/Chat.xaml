@@ -1,0 +1,33 @@
+﻿<ui:ContentDialog x:Class="Turtlz_Launcher.Chat"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:Turtlz_Launcher"
+      mc:Ignorable="d"
+      PrimaryButtonStyle="{DynamicResource AccentButtonStyle}"
+      PrimaryButtonText="Ok"
+      PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="Chat using Discord"
+      Background="#36393F"
+      xmlns:fw="clr-namespace:SourceChord.FluentWPF;assembly=FluentWPF"
+      xmlns:ui="http://schemas.modernwpf.com/2019" xmlns:wv2="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf">
+    <ui:ContentDialog.Resources>
+        <LinearGradientBrush x:Key="btnBackground" EndPoint="0.5,1" StartPoint="0.5,0">
+            <GradientStop Color="#FF26BB0E" Offset="0.508"/>
+            <GradientStop Color="#FF11782D" Offset="0.988"/>
+            <GradientStop Color="#FF2B931B" Offset="0.256"/>
+            <GradientStop Color="#FF117A2B" Offset="1"/>
+        </LinearGradientBrush>
+        <LinearGradientBrush x:Key="btnNobackground" EndPoint="0.5,1" StartPoint="0.5,0">
+            <GradientStop Color="#FFEE1D1D" Offset="0.508"/>
+            <GradientStop Color="#FFA63C3C" Offset="0.988"/>
+            <GradientStop Color="#FFAE4E4E" Offset="0.256"/>
+            <GradientStop Color="#FFEE1D1D" Offset="1"/>
+        </LinearGradientBrush>
+    </ui:ContentDialog.Resources>
+    <Grid>
+        <wv2:WebView2 IsEnabled="True" Width="350" x:Name="ww2Discord" Height="500" Grid.Row="1" Source="https://e.widgetbot.io/channels/949252950772027412/950032703418433537"/>
+    </Grid>
+</ui:ContentDialog>

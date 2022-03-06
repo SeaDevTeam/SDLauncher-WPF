@@ -150,6 +150,7 @@ namespace Turtlz_Launcher
             switchRPC.IsOn = Properties.Settings.Default.UseDiscordRPC;
             switchhide.IsOn = Properties.Settings.Default.Autohide;
             txtbxStats.Text = Properties.Settings.Default.RPCStats;
+            switchgamelog.IsOn = Properties.Settings.Default.ShowGameLog;
             cbSkipAssetsDownload.IsChecked = Properties.Settings.Default.SkipAssetsDown;
             launchVer = Properties.Settings.Default.StringVer;
             cbSkipHashCheck.IsChecked = Properties.Settings.Default.SkipHashCheck;
@@ -527,13 +528,16 @@ namespace Turtlz_Launcher
             }
             finally
             {
-                // re open log page
-                if (logPage != null)
-                    logPage.Hide();
+                if (switchgamelog.IsOn)
+                {
+                    // re open log page
+                    if (logPage != null)
+                        logPage.Hide();
 
-                logPage = new GameLog();
-                logPage.CloseButtonText = "Close";
-                logPage.ShowAsync();
+                    logPage = new GameLog();
+                    logPage.CloseButtonText = "Close";
+                    logPage.ShowAsync();
+                }
 
                 // enable ui
             }
@@ -836,6 +840,7 @@ namespace Turtlz_Launcher
             Properties.Settings.Default.CurrentRam = (int)sliderRAM.Value;
             Properties.Settings.Default.UseDiscordRPC = switchRPC.IsOn;
             Properties.Settings.Default.Autohide = switchhide.IsOn;
+            Properties.Settings.Default.ShowGameLog = switchgamelog.IsOn;
             Properties.Settings.Default.RPCStats = txtbxStats.Text;
             Properties.Settings.Default.MCServer = vars.Serv;
             Properties.Settings.Default.MCport = vars.port;
@@ -997,6 +1002,7 @@ namespace Turtlz_Launcher
         static string RPCstate;
         private void RPCTick(object sender, EventArgs e)
         {
+
             RichPresence tempPrec;
             string MCver = "";
             if (VerSelectAdvaced == 0)
@@ -1121,7 +1127,7 @@ namespace Turtlz_Launcher
         {
             var d = new MessageBoxEx("Hello", "Title", MessageBoxButton.OK, MessageBoxImage.Error);
             d.Owner = Application.Current.MainWindow;
-            d.ShowDialog();
+            //d.ShowDialog();
             try
             {
                 MCprocess.Kill();
@@ -1214,6 +1220,20 @@ namespace Turtlz_Launcher
         private void btnAbout_Click(object sender, RoutedEventArgs e)
         {
             new aboutPage().ShowAsync();
+        }
+
+        Chat chatdia = null;
+        private void btnChat_Click(object sender, RoutedEventArgs e)
+        {
+            if(chatdia != null)
+            {
+                chatdia.ShowAsync();
+            }
+            else
+            {
+                chatdia = new Chat();
+                chatdia.ShowAsync();
+            }
         }
     }
 }

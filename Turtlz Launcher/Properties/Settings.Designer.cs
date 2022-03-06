@@ -189,5 +189,17 @@ namespace Turtlz_Launcher.Properties {
                 this["StringVer"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool ShowGameLog {
+            get {
+                return ((bool)(this["ShowGameLog"]));
+            }
+            set {
+                this["ShowGameLog"] = value;
+            }
+        }
     }
 }

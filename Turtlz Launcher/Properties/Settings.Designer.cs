@@ -37,7 +37,7 @@ namespace Turtlz_Launcher.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("1.18.1")]
+        [global::System.Configuration.DefaultSettingValueAttribute("1.18.2")]
         public string CurrentVer {
             get {
                 return ((string)(this["CurrentVer"]));

@@ -53,8 +53,7 @@ namespace Turtlz_Launcher
                         double totalBytes = double.Parse(e.TotalBytesToReceive.ToString());
                         double percentage = bytesIn / totalBytes * 100;
                         pnlUPUI.Visibility = Visibility.Visible;
-                        btnUpdate.IsEnabled = true;
-                        pnlUPUI.Visibility = Visibility.Collapsed;
+                        btnUpdate.IsEnabled = false;
                         if (!exe)
                         {
                             state.Text = "Checking for updates";
@@ -96,7 +95,7 @@ namespace Turtlz_Launcher
             string full = major + "." + minor + build;
             MessageBox.Show(full);
             double ver = double.Parse(full);
-            if(ver > 0.75)
+            if (ver > 0.75)
             {
                 if(MessageBox.Show("Version " + full + " is available ! Do you want to download and run the installer now ?","Updates available",MessageBoxButton.YesNo,MessageBoxImage.Information) == MessageBoxResult.Yes)
                 {

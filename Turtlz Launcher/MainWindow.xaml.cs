@@ -28,6 +28,7 @@ using DiscordRPC;
 using DiscordRPC.Logging;
 using CmlLib.Core.Installer.FabricMC;
 using System.IO.Compression;
+using Button = DiscordRPC.Button;
 //using Discord;
 //using Discord.Net;
 //using Discord.Webhook;
@@ -45,6 +46,7 @@ namespace Turtlz_Launcher
     /// </summary>
     public partial class MainWindow : Window
     {
+        System.Windows.Forms.ContextMenuStrip menuStrip = new System.Windows.Forms.ContextMenuStrip();
         public static System.Windows.Threading.DispatcherTimer timer;
         public static System.Windows.Threading.DispatcherTimer discordTimer;
         CMLauncher launcher;
@@ -165,6 +167,8 @@ namespace Turtlz_Launcher
         {
             InitializeComponent();
             LoadSettings();
+            menuStrip.Items.Add("Open", null, (s, e) => this.Show());
+            menuStrip.Items.Add("Kill Minecraft", null, (s, e) => btnMCKill_Click(null, null));
             timer = new System.Windows.Threading.DispatcherTimer();
             timer.Tick += Timer1_Tick;
             timer.Interval = new TimeSpan(0, 0, 0, 0, 10);
@@ -174,11 +178,11 @@ namespace Turtlz_Launcher
             discordTimer.Interval = new TimeSpan(0, 0, 0, 0, 10);
             discordTimer.Start();
             m_notifyIcon = new System.Windows.Forms.NotifyIcon();
-            m_notifyIcon.BalloonTipText = "Click to show";
             m_notifyIcon.BalloonTipTitle = "Emarld Launcher";
+            m_notifyIcon.BalloonTipText = "Right click on the context menu of tray icon to restore";
             m_notifyIcon.Text = "Emarld Launcher";
+            m_notifyIcon.ContextMenuStrip = menuStrip;
             m_notifyIcon.Icon = new System.Drawing.Icon("app.ico");
-            m_notifyIcon.Click += new EventHandler(m_notifyIcon_Click);
         }
 
         async void LoadLogs()
@@ -895,6 +899,8 @@ namespace Turtlz_Launcher
             }
             else
             {
+                m_notifyIcon.Dispose();
+                m_notifyIcon = null;
                 SaveSettings();
             }
         }
@@ -944,14 +950,32 @@ namespace Turtlz_Launcher
         {
             Assets = new Assets()
             {
-                LargeImageKey = "minecraft",
+                LargeImageKey = "minecraft",               
                 LargeImageText = "Playing Minecraft",
                 SmallImageKey = "appico",
                 SmallImageText = "Emerald launcher"
-            }
+            },
+            Buttons = new Button[]
+                {
+                    new Button() { Label = "Get SDLauncher", Url = "https://github.com/Chaniru22/SDLauncher" }
+                }
         };
         void RPCInitialize()
         {
+            presence.Timestamps.Start = DateTime.MinValue;
+            presence.Timestamps.End = DateTime.MaxValue;
+
+
+            try
+
+            {
+                RPCclient.Dispose();
+            }
+            catch
+            {
+
+            }
+            RPCclient = null;
             RPCclient = new DiscordRpcClient("945758066161356932");
             RPCclient.Logger = new ConsoleLogger() { Level = LogLevel.Warning };
             RPCclient.OnReady += (sender, e) =>
@@ -1026,7 +1050,8 @@ namespace Turtlz_Launcher
                         SmallImageKey = "appico",
                         SmallImageText = "Emerald Launcher"
                     }
-                };
+            };
+                tempPrec.Buttons = presence.Buttons;
                 presence = tempPrec;
                 if (RPCclient != null)
                 {
@@ -1056,7 +1081,9 @@ namespace Turtlz_Launcher
                         SmallImageKey = "appico",
                         SmallImageText = "Emerald Launcher"
                     }
+                   
                 };
+                tempPrec.Buttons = presence.Buttons;
                 presence = tempPrec;
                 if (RPCclient != null)
                 {
@@ -1065,6 +1092,7 @@ namespace Turtlz_Launcher
                         try
                         {
                             RPCclient.SetPresence(presence);
+                            RPCclient.Invoke();
                         }
                         catch (Exception ex)
                         {

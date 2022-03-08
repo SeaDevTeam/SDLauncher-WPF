@@ -101,7 +101,8 @@ namespace Turtlz_Launcher
             loginWindow.Height = 800;
             loginWindow.LoadingText = "Loading";
             loginWindow.ShowInTaskbar = false;
-            loginWindow.WindowStyle = WindowStyle.ToolWindow;
+            loginWindow.WindowStyle = WindowStyle.SingleBorderWindow;
+            loginWindow.ResizeMode = ResizeMode.NoResize;
             loginWindow.WindowStartupLocation = WindowStartupLocation.CenterScreen;
             MSession session = loginWindow.ShowLoginDialog();
             if (session != null)
@@ -121,7 +122,8 @@ namespace Turtlz_Launcher
             MicrosoftLoginWindow loginWindow = new MicrosoftLoginWindow();
             loginWindow.Height = 800;
             loginWindow.ShowInTaskbar = false;
-            loginWindow.WindowStyle = WindowStyle.ToolWindow;
+            loginWindow.WindowStyle = WindowStyle.SingleBorderWindow;
+            loginWindow.ResizeMode = ResizeMode.NoResize;
             loginWindow.WindowStartupLocation = WindowStartupLocation.CenterScreen;
             loginWindow.LoadingText = "Loading";
             loginWindow.Title = "Logout";

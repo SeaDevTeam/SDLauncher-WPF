@@ -28,6 +28,7 @@
         </LinearGradientBrush>
     </ui:ContentDialog.Resources>
     <Grid>
-        <wv2:WebView2 IsEnabled="True" Width="350" x:Name="ww2Discord" Height="500" Grid.Row="1" Source="https://e.widgetbot.io/channels/949252950772027412/950032703418433537"/>
+        <ui:ProgressRing Width="75" Height="75" IsActive="True" x:Name="ring"/>
+        <wv2:WebView2 NavigationCompleted="ww2Discord_NavigationCompleted"  Visibility="Hidden" IsEnabled="True" Width="350" x:Name="ww2Discord" Height="500" Grid.Row="1" Source="https://e.widgetbot.io/channels/949252950772027412/950032703418433537"/>
     </Grid>
 </ui:ContentDialog>

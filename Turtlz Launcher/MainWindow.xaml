@@ -48,7 +48,7 @@
                 <ColumnDefinition Width="185"/>
             </Grid.ColumnDefinitions>
             <StackPanel Grid.Column="0"  Orientation="Horizontal">
-                <TextBlock Text="Emerald Launcher" FontSize="14" Margin="15,0,0,0" VerticalAlignment="Center" Height="19"/>
+                <TextBlock Text="SDLauncher" FontSize="14" Margin="15,0,0,0" VerticalAlignment="Center" Height="19"/>
             </StackPanel>
             <DockPanel Grid.Column="1" DockPanel.Dock="Right">
 
@@ -77,22 +77,21 @@
                                     </Grid.RowDefinitions>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="100"/>
                                     </Grid.ColumnDefinitions>
                                     <StackPanel Grid.Row="0" HorizontalAlignment="Stretch" Orientation="Horizontal">
                                         <ui:PersonPicture x:Name="prpFly" Width="60"/>
                                             <TextBlock x:Name="lbluserFly" Text="Login" Margin="5,0,0,0" VerticalAlignment="Center" FontWeight="SemiBold" FontSize="23"/>
                                             <Button x:Name="btnLogin" FontSize="13" Padding="10,5" Margin="10" Click="TitleBarButton_Click_1" Content="Login" />
-                                        </StackPanel>
-                                        <StackPanel  Grid.Column="1"  Orientation="Horizontal">
+                                        <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
                                             <Button Click="TitleBarButton_Click" MinWidth="0" Padding="10" HorizontalAlignment="Left">
                                         <ui:SymbolIcon Symbol="Setting"/>
                                         </Button>
                                                 <Button Click="btnChat_Click" HorizontalAlignment="Left" Padding="5" Margin="5,0,0,0">
                                                     <Image Source="\discord.png" Width="30" Stretch="UniformToFill"/>
                                                 </Button>
-                                        </StackPanel>
-                                        <StackPanel Margin="50,5,0,0" Grid.Row="1">
+                                                </StackPanel>
+                                            </StackPanel>
+                                            <StackPanel Margin="50,5,0,0" Grid.Row="1">
                                                 <TextBlock FontSize="13" Text="Status:" Margin="0,0,0,5"/>
                                             <TextBox x:Name="txtbxStats" MinHeight="60" TextWrapping="Wrap" MaxWidth="300"/>
                                         </StackPanel>
@@ -108,10 +107,10 @@
                 </StackPanel>
             </DockPanel>
         </Grid>
-        <ui:SplitView IsPaneOpen="True" Grid.Row="1" PanePlacement="Right" OpenPaneLength="360" Name="SettingsPane" PaneBackground="Transparent">
+        <ui:SplitView Grid.Row="1" PanePlacement="Right" OpenPaneLength="360" Name="SettingsPane" PaneBackground="Transparent">
             <ui:SplitView.Pane>
-                <ui:ScrollViewerEx>
-                <Grid Background="{fw:AcrylicBrush TintOpacity=0.98, TintColor=#1E1E1E,NoiseOpacity=0.025}"  >
+                <ui:ScrollViewerEx x:Name="scrlSettings">
+                    <Grid Background="{fw:AcrylicBrush TintOpacity=0.98, TintColor=#1E1E1E,NoiseOpacity=0.025}"  >
                     <StackPanel Margin="10">
                         <StackPanel VerticalAlignment="Top" Orientation="Horizontal">
                             <ui:SymbolIcon Symbol="Setting" VerticalAlignment="Center" />
@@ -223,7 +222,7 @@
                             </ui:MenuFlyout>
                         </ui:DropDownButton.Flyout>
                     </ui:DropDownButton>
-                    <Button BorderThickness="0" Foreground="White" x:Name="btnLaunch" Click="btnLaunch_Click" FontSize="14" Width="110" FontWeight="SemiBold" Content="Launch">
+                    <Button BorderThickness="0" BorderBrush="Transparent" Foreground="White" x:Name="btnLaunch" Click="btnLaunch_Click" FontSize="14" Width="110" FontWeight="SemiBold" Content="Launch">
                         <Button.Background>
                             <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                                 <GradientStop Color="#FF041666"/>
@@ -235,6 +234,7 @@
                         </Button.Background>
                         <Button.Resources>
                             <Style TargetType="Border">
+                                <Setter Property="BorderThickness" Value="0"/>
                                 <Setter Property="CornerRadius" Value="5"/>
                             </Style>
                         </Button.Resources>

@@ -8,6 +8,7 @@ namespace Turtlz_Launcher
     {
         public static MSession session;
         public static string UserName;
+        public static string MegaLog;
         public static string DiscordToken = "";
         public static string Serv = "";
         public static int port = 25565;

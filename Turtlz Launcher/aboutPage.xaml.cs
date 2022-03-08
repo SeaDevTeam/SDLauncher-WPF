@@ -93,24 +93,31 @@ namespace Turtlz_Launcher
             string minor = parser.GetValue("minor");
             string build = parser.GetValue("build");
             string full = major + "." + minor + build;
-            double ver = double.Parse(full);
-            if (ver > 0.8)
+            try
             {
-                if(MessageBox.Show("Version " + full + " is available ! Do you want to download and run the installer now ?","Updates available",MessageBoxButton.YesNo,MessageBoxImage.Information) == MessageBoxResult.Yes)
+                double ver = double.Parse(full);
+                if (ver > 0.8)
                 {
-                    if (IntPtr.Size == 8)
+                    if (MessageBox.Show("Version " + full + " is available ! Do you want to download and run the installer now ?", "Updates available", MessageBoxButton.YesNo, MessageBoxImage.Information) == MessageBoxResult.Yes)
                     {
-                        Update("https://raw.githubusercontent.com/Chaniru22/SDLauncher/main/updates.exe", System.IO.Directory.GetCurrentDirectory() + "\\updates.exe", true);
-                    }
-                    else if (IntPtr.Size == 4)
-                    {
-                        Update("https://raw.githubusercontent.com/Chaniru22/SDLauncher/main/updatesx86.exe", System.IO.Directory.GetCurrentDirectory() + "\\updates.exe", true);
+                        if (IntPtr.Size == 8)
+                        {
+                            Update("https://raw.githubusercontent.com/Chaniru22/SDLauncher/main/updates.exe", System.IO.Directory.GetCurrentDirectory() + "\\updates.exe", true);
+                        }
+                        else if (IntPtr.Size == 4)
+                        {
+                            Update("https://raw.githubusercontent.com/Chaniru22/SDLauncher/main/updatesx86.exe", System.IO.Directory.GetCurrentDirectory() + "\\updates.exe", true);
+                        }
                     }
                 }
+                else
+                {
+                    MessageBox.Show("You are up to date");
+                }
             }
-            else
+            catch
             {
-                MessageBox.Show("You are up to date");
+                MessageBox.Show("Checking Updates Failed");
             }
         }
 

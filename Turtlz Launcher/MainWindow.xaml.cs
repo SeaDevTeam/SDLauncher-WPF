@@ -29,6 +29,7 @@ using DiscordRPC.Logging;
 using CmlLib.Core.Installer.FabricMC;
 using System.IO.Compression;
 using Button = DiscordRPC.Button;
+using System.Windows.Interop;
 //using Discord;
 //using Discord.Net;
 //using Discord.Webhook;
@@ -80,7 +81,7 @@ namespace Turtlz_Launcher
                 }
                 catch (Exception ex)
                 {
-                    if (MessageBox.Show("Error occurred when trying to initialize the launcher, Do you want to restart the app ?" + Environment.NewLine + ex.Message + Environment.NewLine + "It says your internet could not make a launch option with the path, Can't connect to mojang servers", "Error", MessageBoxButton.YesNo, MessageBoxImage.Error) == MessageBoxResult.Yes)
+                    if (MessageBox.Show(this, "Error occurred when trying to initialize the launcher, Do you want to restart the app ?" + Environment.NewLine + ex.Message + Environment.NewLine + "It says your internet could not make a launch option with the path, Can't connect to mojang servers", "Error", MessageBoxButton.YesNo, MessageBoxImage.Error) == MessageBoxResult.Yes)
                     {
                         Process.Start(Process.GetCurrentProcess().MainModule.FileName);
                         Application.Current.Shutdown();
@@ -97,7 +98,7 @@ namespace Turtlz_Launcher
                 }
                 catch (Exception ex)
                 {
-                    if (MessageBox.Show("Error occurred when trying to initialize the launcher, Do you want to restart the app ?" + Environment.NewLine + ex.Message + Environment.NewLine + "It says your internet could not make a launch option with the path, Can't connect to mojang servers", "Error", MessageBoxButton.YesNo, MessageBoxImage.Error) == MessageBoxResult.Yes)
+                    if (MessageBox.Show(this, "Error occurred when trying to initialize the launcher, Do you want to restart the app ?" + Environment.NewLine + ex.Message + Environment.NewLine + "It says your internet could not make a launch option with the path, Can't connect to mojang servers", "Error", MessageBoxButton.YesNo, MessageBoxImage.Error) == MessageBoxResult.Yes)
                     {
                         Process.Start(Process.GetCurrentProcess().MainModule.FileName);
                         Application.Current.Shutdown();
@@ -110,7 +111,7 @@ namespace Turtlz_Launcher
             var computerMemory = Util.GetMemoryMb();
             if (computerMemory == null)
             {
-                if (MessageBox.Show("Error occurred when trying to Getting the RAM of the PC, Do you want to restart ?", "Error", MessageBoxButton.YesNo, MessageBoxImage.Error) == MessageBoxResult.Yes)
+                if (MessageBox.Show(this, "Error occurred when trying to Getting the RAM of the PC, Do you want to restart ?", "Error", MessageBoxButton.YesNo, MessageBoxImage.Error) == MessageBoxResult.Yes)
                 {
                     Process.Start(Process.GetCurrentProcess().MainModule.FileName);
                     Application.Current.Shutdown();
@@ -205,7 +206,7 @@ namespace Turtlz_Launcher
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Getting changelogs failed " + Environment.NewLine + ex.Message);
+                MessageBox.Show(this, "Getting changelogs failed " + Environment.NewLine + ex.Message);
             }
             status.Text = "Ready";
         }
@@ -397,7 +398,7 @@ namespace Turtlz_Launcher
             UI(false);
             if (vars.session == null)
             {
-                MessageBox.Show("Please login");
+                MessageBox.Show(this, "Please login");
                 var logindialog = new Login();
                 logindialog.IsPrimaryButtonEnabled = false;
                 logindialog.IsSecondaryButtonEnabled = false;
@@ -409,7 +410,7 @@ namespace Turtlz_Launcher
             {
                 if (btnMCVer.Content.ToString() == "Version")
                 {
-                    MessageBox.Show("Select a version");
+                    MessageBox.Show(this, "Select a version");
                     UI(true);
                     return;
                 }
@@ -422,7 +423,7 @@ namespace Turtlz_Launcher
             {
                 if (string.IsNullOrEmpty(cmbxVer.Text.ToString()))
                 {
-                    MessageBox.Show("Select a version");
+                    MessageBox.Show(this, "Select a version");
                     UI(true);
                     return;
                 }
@@ -507,11 +508,11 @@ namespace Turtlz_Launcher
             }
             catch (FormatException fex) // int.Parse exception
             {
-                MessageBox.Show("Failed to create MLaunchOption\n\n" + fex);
+                MessageBox.Show(this, "Failed to create MLaunchOption\n\n" + fex);
             }
             catch (MDownloadFileException mex) // download exception
             {
-                MessageBox.Show(
+                MessageBox.Show(this, 
                     $"FileName : {mex.ExceptionFile.Name}\n" +
                     $"FilePath : {mex.ExceptionFile.Path}\n" +
                     $"FileUrl : {mex.ExceptionFile.Url}\n" +
@@ -520,20 +521,18 @@ namespace Turtlz_Launcher
             }
             catch (Win32Exception wex) // java exception
             {
-                MessageBox.Show(wex + "\n\nIt seems your java setting has problem");
+                MessageBox.Show(this, wex + "\n\nIt seems your java setting has problem");
             }
             catch (Exception ex) // all exception
             {
-                MessageBox.Show(ex.ToString());
+                MessageBox.Show(this, ex.ToString());
             }
             finally
             {
+                logPage = new GameLog();
                 if (switchgamelog.IsOn)
                 {
                     // re open log page
-                    if (logPage != null)
-                        logPage.Hide();
-
                     logPage = new GameLog();
                     logPage.CloseButtonText = "Close";
                     logPage.ShowAsync();
@@ -545,6 +544,7 @@ namespace Turtlz_Launcher
         private void UI(bool value)
         {
             UIstate = value;
+            btnLogin.IsEnabled = value;
             pnlLaunch.IsEnabled = value;
             sliderRAM.IsEnabled = value;
             swtchVer.IsEnabled = value;
@@ -729,7 +729,7 @@ namespace Turtlz_Launcher
             }
             else
             {
-                if (MessageBox.Show("To run " + mit.Header.ToString() +" you need to have installed version " + mcver + ". Vanilla,Do you want to install now ?", "Error", MessageBoxButton.YesNo, MessageBoxImage.Error) == MessageBoxResult.Yes)
+                if (MessageBox.Show(this, "To run " + mit.Header.ToString() +" you need to have installed version " + mcver + ". Vanilla,Do you want to install now ?", "Error", MessageBoxButton.YesNo, MessageBoxImage.Error) == MessageBoxResult.Yes)
                 {
                     btnMCVer.Content = mcver;
                     launchVer = mcver;
@@ -754,7 +754,7 @@ namespace Turtlz_Launcher
             }
             else
             {
-                if (MessageBox.Show("Couldn't find OptiFine installed on this minecraft. Do you want to download and install from our servers ?", "Error", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                if (MessageBox.Show(this, "Couldn't find OptiFine installed on this minecraft. Do you want to download and install from our servers ?", "Error", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                 {
                     if (File.Exists(gamepath.BasePath + "\\versions\\" + mcver + "\\" + mcver + ".jar"))
                     {
@@ -800,14 +800,14 @@ namespace Turtlz_Launcher
                         else
                         {
                             isOptiFineRuns = true;
-                            MessageBox.Show("This will download main OptiFine library, Please click again " + mit.Header.ToString() + " (after download and extract the main OptiFine) to install optifine of that version !");
+                            MessageBox.Show(this, "This will download main OptiFine library, Please click again " + mit.Header.ToString() + " (after download and extract the main OptiFine) to install optifine of that version !");
                             optver = " Lib";
                             OptFineDownload("https://github.com/Chaniru22/Emerald-Launcher-Public/raw/main/optifine.zip", Directory.GetCurrentDirectory() + "\\OptiFine.zip", ModType.lib); 
                         }
                     }
                     else
                     {
-                        MessageBox.Show("You have to install & run minecraft version " + mcver + " one time to install OptiFine", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                        MessageBox.Show(this, "You have to install & run minecraft version " + mcver + " one time to install OptiFine", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                         btnMCVer.Content = mcver;
                         launchVer = mcver;
                     }
@@ -876,7 +876,7 @@ namespace Turtlz_Launcher
         {
             if (isGameRuns)
             {
-                var result = MessageBox.Show("Minecraft version:" + currentVer + " is running/launching, Do you really want to close?", "Info", MessageBoxButton.YesNo, MessageBoxImage.Information);
+                var result = MessageBox.Show(this, "Minecraft version:" + currentVer + " is running/launching, Do you really want to close?", "Info", MessageBoxButton.YesNo, MessageBoxImage.Information);
                 if (result == MessageBoxResult.Yes)
                 {
                     m_notifyIcon.Dispose();
@@ -890,7 +890,7 @@ namespace Turtlz_Launcher
             }
             else if (isOptiFineRuns)
             {
-                var result = MessageBox.Show("OptiFine is installing, Do you really want to close?", "Info", MessageBoxButton.YesNo, MessageBoxImage.Information);
+                var result = MessageBox.Show(this, "OptiFine is installing, Do you really want to close?", "Info", MessageBoxButton.YesNo, MessageBoxImage.Information);
                 if (result == MessageBoxResult.Yes)
                 {
                     m_notifyIcon.Dispose();
@@ -937,6 +937,7 @@ namespace Turtlz_Launcher
 
         private void TitleBarButton_Click(object sender, RoutedEventArgs e)
         {
+            scrlSettings.ScrollToTop();
             Loginflyout.Hide();
             SettingsPane.IsPaneOpen = !SettingsPane.IsPaneOpen;
         }
@@ -967,12 +968,7 @@ namespace Turtlz_Launcher
         };
         void RPCInitialize()
         {
-            presence.Timestamps.Start = DateTime.MinValue;
-            presence.Timestamps.End = DateTime.MaxValue;
-
-
             try
-
             {
                 RPCclient.Dispose();
             }
@@ -980,6 +976,7 @@ namespace Turtlz_Launcher
             {
 
             }
+            presence.Timestamps = new Timestamps(starttime, null);
             RPCclient = null;
             RPCclient = new DiscordRpcClient("945758066161356932");
             RPCclient.Logger = new ConsoleLogger() { Level = LogLevel.Warning };
@@ -992,12 +989,20 @@ namespace Turtlz_Launcher
             {
                 Debug.WriteLine("RPC Received Update!");
             };
+            try
+            {
+                RPCclient.Initialize();
+                RPCclient.SetPresence(presence);
+                RPCclient.UpdateStartTime(starttime);
+                isRPCon = true;
+            }
+            catch
+            {
+                isRPCon = false;
+            }
 
-            RPCclient.Initialize();
-            RPCclient.SetPresence(presence);
-            isRPCon = true;
         }
-
+        DateTime starttime = DateTime.UtcNow;
         bool isRPCon;
         static string RPCstate;
         private void RPCTick(object sender, EventArgs e)
@@ -1032,6 +1037,7 @@ namespace Turtlz_Launcher
             {
                 if (!isRPCon)
                 {
+                    isRPCon = true;
                     RPCInitialize();
                 }
             }
@@ -1054,11 +1060,12 @@ namespace Turtlz_Launcher
                         LargeImageKey = "minecraft",
                         LargeImageText = "Minecraft" + MCver,
                         SmallImageKey = "appico",
-                        SmallImageText = "Emerald Launcher"
+                        SmallImageText = "SDLauncher"
                     }
             };
                 tempPrec.Buttons = presence.Buttons;
                 presence = tempPrec;
+                presence.Timestamps = new Timestamps(starttime, null);
                 if (RPCclient != null)
                 {
                     if (!RPCclient.IsDisposed)
@@ -1066,6 +1073,8 @@ namespace Turtlz_Launcher
                         try
                         {
                             RPCclient.SetPresence(presence);
+                            RPCclient.Invoke();
+                            RPCclient.UpdateStartTime(starttime);
                         }
                         catch (Exception ex)
                         {
@@ -1085,12 +1094,13 @@ namespace Turtlz_Launcher
                         LargeImageKey = "minecraft",
                         LargeImageText = "Minecraft" + MCver,
                         SmallImageKey = "appico",
-                        SmallImageText = "Emerald Launcher"
+                        SmallImageText = "SDLauncher"
                     }
                    
                 };
                 tempPrec.Buttons = presence.Buttons;
                 presence = tempPrec;
+                presence.Timestamps = new Timestamps(starttime, null);
                 if (RPCclient != null)
                 {
                     if (!RPCclient.IsDisposed)
@@ -1099,6 +1109,7 @@ namespace Turtlz_Launcher
                         {
                             RPCclient.SetPresence(presence);
                             RPCclient.Invoke();
+                            RPCclient.UpdateStartTime(starttime);
                         }
                         catch (Exception ex)
                         {
@@ -1219,12 +1230,15 @@ namespace Turtlz_Launcher
 
         private void btnAbout_Click(object sender, RoutedEventArgs e)
         {
-            new aboutPage().ShowAsync();
+            SettingsPane.IsPaneOpen = false;
+            var page = new aboutPage();
+            page.ShowAsync();
         }
 
         Chat chatdia = null;
         private void btnChat_Click(object sender, RoutedEventArgs e)
         {
+            Loginflyout.Hide();
             if(chatdia != null)
             {
                 chatdia.ShowAsync();

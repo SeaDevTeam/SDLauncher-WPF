@@ -96,9 +96,9 @@ namespace Turtlz_Launcher
             try
             {
                 double ver = double.Parse(full);
-                if (ver > 0.8)
+                if (ver > 0.85)
                 {
-                    if (MessageBox.Show("Version " + full + " is available ! Do you want to download and run the installer now ?", "Updates available", MessageBoxButton.YesNo, MessageBoxImage.Information) == MessageBoxResult.Yes)
+                    if (MessageBox.Show("Version " + major + "." + minor + "." + build + " is available ! Do you want to download and run the installer now ?", "Updates available", MessageBoxButton.YesNo, MessageBoxImage.Information) == MessageBoxResult.Yes)
                     {
                         if (IntPtr.Size == 8)
                         {

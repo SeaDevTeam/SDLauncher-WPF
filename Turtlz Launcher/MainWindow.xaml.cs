@@ -767,7 +767,7 @@ namespace Turtlz_Launcher
                                 isOptiFineRuns = true;
                                 UI(false);
                                 optver = ": " + mcver;
-                                OptFineDownload("https://github.com/Chaniru22/Emerald-Launcher-Public/raw/main/OptiFine-1.18.2.zip", Directory.GetCurrentDirectory() + "\\OptiFine-" + mcver + ".zip", ModType.ver);
+                                OptFineDownload("https://raw.githubusercontent.com/Chaniru22/SDLauncher/main/OptiFine-1.18.2.zip", Directory.GetCurrentDirectory() + "\\OptiFine-" + mcver + ".zip", ModType.ver);
                             }
                             if (mcver == "1.18.1")
                             {
@@ -776,7 +776,7 @@ namespace Turtlz_Launcher
                                 isOptiFineRuns = true;
                                 UI(false);
                                 optver = ": " + mcver;
-                                OptFineDownload("https://github.com/Chaniru22/Emerald-Launcher-Public/raw/main/OptiFine-1.18.1.zip", Directory.GetCurrentDirectory() + "\\OptiFine-" + mcver + ".zip", ModType.ver);
+                                OptFineDownload("https://raw.githubusercontent.com/Chaniru22/SDLauncher/main/OptiFine-1.18.1.zip", Directory.GetCurrentDirectory() + "\\OptiFine-" + mcver + ".zip", ModType.ver);
                             }
                             else if (mcver == "1.17.1")
                             {
@@ -785,7 +785,7 @@ namespace Turtlz_Launcher
                                 isOptiFineRuns = true;
                                 UI(false);
                                 optver = ": " + mcver;
-                                OptFineDownload("https://github.com/Chaniru22/Emerald-Launcher-Public/raw/main/OptiFine-1.17.1.zip", Directory.GetCurrentDirectory() + "\\OptiFine-" + mcver + ".zip", ModType.ver);
+                                OptFineDownload("https://raw.githubusercontent.com/Chaniru22/SDLauncher/main/OptiFine-1.17.1.zip", Directory.GetCurrentDirectory() + "\\OptiFine-" + mcver + ".zip", ModType.ver);
                             }
                             else if (mcver == "1.16.5")
                             {
@@ -794,7 +794,7 @@ namespace Turtlz_Launcher
                                 isOptiFineRuns = true;
                                 UI(false);
                                 optver = ": " + mcver;
-                                OptFineDownload("https://github.com/Chaniru22/Emerald-Launcher-Public/raw/main/OptiFine-1.16.5.zip", Directory.GetCurrentDirectory() + "\\OptiFine-" + mcver + ".zip", ModType.ver);
+                                OptFineDownload("https://raw.githubusercontent.com/Chaniru22/SDLauncher/main/OptiFine-1.16.5.zip", Directory.GetCurrentDirectory() + "\\OptiFine-" + mcver + ".zip", ModType.ver);
                             }
                         }
                         else
@@ -802,7 +802,7 @@ namespace Turtlz_Launcher
                             isOptiFineRuns = true;
                             MessageBox.Show(this, "This will download main OptiFine library, Please click again " + mit.Header.ToString() + " (after download and extract the main OptiFine) to install optifine of that version !");
                             optver = " Lib";
-                            OptFineDownload("https://github.com/Chaniru22/Emerald-Launcher-Public/raw/main/optifine.zip", Directory.GetCurrentDirectory() + "\\OptiFine.zip", ModType.lib); 
+                            OptFineDownload("https://raw.githubusercontent.com/Chaniru22/SDLauncher/main/optifine.zip", Directory.GetCurrentDirectory() + "\\OptiFine.zip", ModType.lib); 
                         }
                     }
                     else
@@ -959,7 +959,7 @@ namespace Turtlz_Launcher
                 LargeImageKey = "minecraft",               
                 LargeImageText = "Playing Minecraft",
                 SmallImageKey = "appico",
-                SmallImageText = "Emerald launcher"
+                SmallImageText = "SDLauncher"
             },
             Buttons = new Button[]
                 {
@@ -989,6 +989,7 @@ namespace Turtlz_Launcher
             {
                 Debug.WriteLine("RPC Received Update!");
             };
+            
             try
             {
                 RPCclient.Initialize();

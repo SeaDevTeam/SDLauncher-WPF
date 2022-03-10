@@ -8,7 +8,7 @@
         Loaded="Window_Loaded"
         xmlns:fw="clr-namespace:SourceChord.FluentWPF;assembly=FluentWPF"
         xmlns:wf="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms"
-        Title="Emerald Launcher" Height="450" Width="800"
+        Title="SDLauncher" Height="450" Width="800"
         xmlns:ui="http://schemas.modernwpf.com/2019"
         Closing="OnClose"
         MinHeight="700"

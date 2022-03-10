@@ -29,14 +29,14 @@
         <StackPanel HorizontalAlignment="Center">
             <Image Width="75" Source="/icon.png"/>
             <TextBlock Text="SeaDev Launcher" HorizontalAlignment="Center" FontSize="16" FontWeight="SemiBold"/>
-            <TextBlock HorizontalAlignment="Center" x:Name="txtVer" Text="Version 0.8.0"/>
+            <TextBlock HorizontalAlignment="Center" x:Name="txtVer" Text="Version 0.8.5"/>
             <TextBlock HorizontalAlignment="Center" Text="© Copyright 2022 SeaDev Team"/>
             <TextBlock HorizontalAlignment="Center"><Run>Based on</Run> <Hyperlink x:Name="cml" RequestNavigate="cml_RequestNavigate" Foreground="LightGreen" NavigateUri="https://github.com/CmlLib/CmlLib.Core"> CmlLib</Hyperlink></TextBlock>
             <Expander Margin="0,5,0,0" Header="Links" HorizontalAlignment="Center">
                 <StackPanel>
                 <StackPanel Orientation="Horizontal">
-                    <ui:HyperlinkButton Foreground="LightGreen" NavigateUri="https://github.com/Chaniru22/Emerald-Launcher-Public/" Content="Github"/>
-                        <ui:HyperlinkButton Foreground="LightGreen" NavigateUri="https://github.com/Chaniru22/Emerald-Launcher-Public/issues/new" Margin="5,0,0,0" Content="Repor an issue"/>
+                        <ui:HyperlinkButton Foreground="LightGreen" NavigateUri="https://github.com/Chaniru22/SDLauncher/" Content="Github"/>
+                        <ui:HyperlinkButton Foreground="LightGreen" NavigateUri="https://github.com/Chaniru22/SDLauncher/issues/new" Margin="5,0,0,0" Content="Repor an issue"/>
                 </StackPanel>
                     <ui:HyperlinkButton Foreground="LightGreen" NavigateUri="https://discord.gg/CvaDAbJjz9" Content="Discord" HorizontalAlignment="Center"/>
                 </StackPanel>

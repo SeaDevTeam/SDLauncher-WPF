@@ -126,7 +126,7 @@ namespace Turtlz_Launcher
             System.Diagnostics.Process.Start("explorer.exe", "https://github.com/CmlLib/CmlLib.Core");
         }
 
-        private void btnUpdate_Click(object sender, RoutedEventArgs e)
+        public void btnUpdate_Click(object sender, RoutedEventArgs e)
         {
             Update("https://raw.githubusercontent.com/Chaniru22/SDLauncher/main/updates.ini", System.IO.Directory.GetCurrentDirectory() + "\\updates.ini",false);
         }

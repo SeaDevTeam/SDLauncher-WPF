@@ -142,4 +142,8 @@ namespace Turtlz_Launcher
             return ini.Keys.Where(t => t != "").ToArray();
         }
     }
+    public class KeyCuts
+    {
+
+    }
 }

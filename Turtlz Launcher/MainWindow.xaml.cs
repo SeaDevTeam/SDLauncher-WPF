@@ -66,6 +66,7 @@ namespace Turtlz_Launcher
 
         async void LoadSettings()
         {
+            CTRLM.InputGestures.Add(new KeyGesture(Key.M, ModifierKeys.Control));
             status.Text = "Loading Settings";
             UI(false);
             vars.Serv = Properties.Settings.Default.MCServer;
@@ -1248,6 +1249,88 @@ namespace Turtlz_Launcher
             {
                 chatdia = new Chat();
                 chatdia.ShowAsync();
+            }
+        }
+        public static RoutedCommand CTRLM = new RoutedCommand();
+        private void CTRLMExecuted(object sender, ExecutedRoutedEventArgs e)
+        {
+            CommandsFlyout.ShowAt(btnSettings);
+            txtbxCMDs.Text = "";
+            txtbxCMDs.Focus();
+        }
+
+        private void txtbxCMDs_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Return)
+            {
+                CommandsFlyout.Hide();
+                if (txtbxCMDs.Text.Replace(" ", "").ToString().ToUpper() == "--HELP")
+                {
+                    MessageBox.Show(
+                        " --JOINBETA \r (Join the beta program) \r \r" +
+                        " --LEAVEBETA \r (Leave the beta program) \r \r" +
+                        " --UCEXS \r (Use the current experimental settings of the app) \r \r" +
+                        " --DUCEXS \r (Don't use the current experimental settings of the app) \r \r" +
+                        " --CHKU \r (Check for updates) \r \r" +
+                        " --HELP \r (Display the list of commands) \r \r" +
+                        " --OLDT-TRUE \r (Display old elements) \r \r" +
+                        " --OLDT-FALSE \r (Don't display old elements) \r \r" +
+                        " --EXIT \r (Exit from the launcher) \r \r" +
+                        " --MSGVERS \r (Message the available versions) ", "SDLauncher Command Mode");
+                }
+                else if (txtbxCMDs.Text.Replace(" ", "").ToString().ToUpper() == "--CHKU")
+                {
+                    var page = new aboutPage();
+                    page.ShowAsync();
+                    page.btnUpdate_Click(page.btnUpdate, new RoutedEventArgs());
+                }
+                else if (txtbxCMDs.Text.Replace(" ", "").ToString().ToUpper() == "--MSGVERS")
+                {
+                    string mcverss = "";
+
+                    if(mcVers != null)
+                    {
+                        foreach (var item in mcVers)
+                        {
+                            mcverss += "\r" + item.Name;
+                        }
+                    }
+                    if(mcverss == "")
+                    {
+                        MessageBox.Show("Failed to find the versions", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                    else
+                    {
+                        MessageBox.Show(mcverss);
+                    }
+                }
+                else if (txtbxCMDs.Text.Replace(" ", "").ToString().ToUpper() == "--OLDT-TRUE")
+                {
+                    swtchVer.Visibility = Visibility.Visible;
+                }
+                else if (txtbxCMDs.Text.Replace(" ", "").ToString().ToUpper() == "--OLDT-FALSE")
+                {
+                    swtchVer.Visibility = Visibility.Collapsed;
+                }
+                else if (txtbxCMDs.Text.Replace(" ", "").ToString().ToUpper() == "--EXIT")
+                {
+                    Application.Current.Shutdown();
+                }
+                else
+                {
+                    if (txtbxCMDs.Text.Split(new char[] { '-' }, StringSplitOptions.None).Length < 3)
+                    {
+                        MessageBox.Show("Wrong Command!" + " You may forgot to add '--' before the command.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                    else if (txtbxCMDs.Text.Split(new char[] { '-' }, StringSplitOptions.None).Length > 3)
+                    {
+                        MessageBox.Show("Wrong Command!" + " You have many '-'s", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                    else
+                    {
+                        MessageBox.Show("Wrong Command!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                }
             }
         }
     }

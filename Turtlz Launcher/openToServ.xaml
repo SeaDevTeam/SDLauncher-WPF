@@ -5,9 +5,9 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:Turtlz_Launcher"
       mc:Ignorable="d"
+      Loaded="ContentDialog_Loaded"
       Title="Servers"
       Background="{fw:AcrylicBrush TargetName=Grid, TintOpacity=0.90, TintColor=#1E1E1E}"
-      Loaded="ContentDialog_Loaded"
       xmlns:fw="clr-namespace:SourceChord.FluentWPF;assembly=FluentWPF"
       xmlns:ui="http://schemas.modernwpf.com/2019">
     <ui:ContentDialog.Resources>

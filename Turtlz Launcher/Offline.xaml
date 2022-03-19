@@ -1,0 +1,28 @@
+﻿<Window x:Class="Turtlz_Launcher.Offline"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Turtlz_Launcher"
+        mc:Ignorable="d"
+        xmlns:wpfui="clr-namespace:WPFUI.Controls;assembly=WPFUI"
+        Closing="Window_Closing"
+        ui:WindowHelper.UseModernWindowStyle="True"
+        xmlns:ui="http://schemas.modernwpf.com/2019"
+        Title="SDLauncher" Height="450" Width="800">
+    <Grid>
+        <StackPanel Margin="5">
+            <TextBlock Margin="10" x:Name="lblWelcome" HorizontalAlignment="Center" FontSize="35" Text="Offline Mode" FontFamily="pack://application:,,,/Fonts/#Pixeboy" />
+            <wpfui:TextBox x:Name="txtName" Placeholder="Username" HorizontalAlignment="Left" MinWidth="100"/>
+            <StackPanel Orientation="Horizontal">
+                <Button Click="btnMCpath_Click" x:Name="btnMCpath" HorizontalAlignment="Left" Padding="13,5,15,5" ToolTip="Change Minecraft Folder">
+                    <ui:SymbolIcon Symbol="NewFolder" />
+                </Button>
+                <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+                    <ComboBox Margin="0,0,5,0" MinWidth="100" x:Name="cmbxVer"/>
+                    <Button Click="btnLaunch_Click" x:Name="btnLaunch" Content="Launch"/>
+            </StackPanel>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</Window>

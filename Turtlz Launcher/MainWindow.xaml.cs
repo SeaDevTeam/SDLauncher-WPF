@@ -82,7 +82,7 @@ namespace Turtlz_Launcher
                 }
                 catch (Exception ex)
                 {
-                    if (MessageBox.Show(this, "Error occurred when trying to initialize the launcher, Do you want to restart the app ?" + Environment.NewLine + ex.Message + Environment.NewLine + "It says your internet could not make a launch option with the path, Can't connect to mojang servers", "Error", MessageBoxButton.YesNo, MessageBoxImage.Error) == MessageBoxResult.Yes)
+                    if (MessageBox.Show(this, "Error occurred when trying to initialize the launcher, Do you want to restart the app ?" + Environment.NewLine + ex.Message + Environment.NewLine + "It says your internet could not make a launch option with the path, Can't connect to the servers", "Error", MessageBoxButton.YesNo, MessageBoxImage.Error) == MessageBoxResult.Yes)
                     {
                         Process.Start(Process.GetCurrentProcess().MainModule.FileName);
                         Application.Current.Shutdown();
@@ -99,7 +99,7 @@ namespace Turtlz_Launcher
                 }
                 catch (Exception ex)
                 {
-                    if (MessageBox.Show(this, "Error occurred when trying to initialize the launcher, Do you want to restart the app ?" + Environment.NewLine + ex.Message + Environment.NewLine + "It says your internet could not make a launch option with the path, Can't connect to mojang servers", "Error", MessageBoxButton.YesNo, MessageBoxImage.Error) == MessageBoxResult.Yes)
+                    if (MessageBox.Show(this, "Error occurred when trying to initialize the launcher, Do you want to restart the app ?" + Environment.NewLine + ex.Message + Environment.NewLine + "It says your internet could not make a launch option with the path, Can't connect to the servers", "Error", MessageBoxButton.YesNo, MessageBoxImage.Error) == MessageBoxResult.Yes)
                     {
                         Process.Start(Process.GetCurrentProcess().MainModule.FileName);
                         Application.Current.Shutdown();
@@ -168,6 +168,15 @@ namespace Turtlz_Launcher
         }
         public MainWindow()
         {
+            if (System.Net.NetworkInformation.NetworkInterface.GetIsNetworkAvailable())
+            {
+                if (MessageBox.Show("Cannot find an internet connection! Do you want to switch to offline mode", "Error", MessageBoxButton.YesNo, MessageBoxImage.Error) == MessageBoxResult.Yes)
+                {
+                    vars.Offline = true;
+                    new Offline().ShowDialog();
+                    Application.Current.Shutdown();
+                }
+            }
             InitializeComponent();
             LoadSettings();
             menuStrip.Items.Add("Open", null, (s, e) => this.Show());
@@ -403,8 +412,9 @@ namespace Turtlz_Launcher
                 var logindialog = new Login();
                 logindialog.IsPrimaryButtonEnabled = false;
                 logindialog.IsSecondaryButtonEnabled = false;
-                logindialog.ShowAsync();
                 UI(true);
+                await logindialog.ShowAsync();
+                btnLaunch_Click(null, null);
                 return;
             }
             if (VerSelectAdvaced == 0)
@@ -412,6 +422,7 @@ namespace Turtlz_Launcher
                 if (btnMCVer.Content.ToString() == "Version")
                 {
                     MessageBox.Show(this, "Select a version");
+                    btnMCVer.Focus();
                     UI(true);
                     return;
                 }
@@ -509,7 +520,7 @@ namespace Turtlz_Launcher
             }
             catch (FormatException fex) // int.Parse exception
             {
-                MessageBox.Show(this, "Failed to create MLaunchOption\n\n" + fex);
+                MessageBox.Show(this, "Failed to create MLaunchOption ! You may can try re-log and change some settings again!\n\n" + fex);
             }
             catch (MDownloadFileException mex) // download exception
             {
@@ -539,7 +550,6 @@ namespace Turtlz_Launcher
                     logPage.ShowAsync();
                 }
 
-                // enable ui
             }
         }
         private void UI(bool value)
@@ -882,7 +892,8 @@ namespace Turtlz_Launcher
                 {
                     m_notifyIcon.Dispose();
                     m_notifyIcon = null;
-                    SaveSettings();
+                    if (!vars.Offline)
+                        SaveSettings();
                 }
                 else
                 {
@@ -896,7 +907,8 @@ namespace Turtlz_Launcher
                 {
                     m_notifyIcon.Dispose();
                     m_notifyIcon = null;
-                    SaveSettings();
+                    if (!vars.Offline)
+                        SaveSettings();
                 }
                 else
                 {
@@ -905,9 +917,17 @@ namespace Turtlz_Launcher
             }
             else
             {
-                m_notifyIcon.Dispose();
-                m_notifyIcon = null;
-                SaveSettings();
+                try
+                {
+                    m_notifyIcon.Dispose();
+                    m_notifyIcon = null;
+                    if (!vars.Offline)
+                        SaveSettings();
+                }
+                catch
+                {
+
+                }
             }
         }
 
@@ -1145,7 +1165,7 @@ namespace Turtlz_Launcher
             {
                 MCprocess.Kill();
             }
-            catch (Exception ex)
+            catch (NullReferenceException ex)
             {
                 _ = System.Windows.Forms.MessageBox.Show("Failed to kill process (No process found)" + Environment.NewLine + ex.Message, "Error", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error, System.Windows.Forms.MessageBoxDefaultButton.Button1);
             }

@@ -24,7 +24,7 @@
             <GradientStop Color="#FFEE1D1D" Offset="1"/>
         </LinearGradientBrush>
     </ui:ContentDialog.Resources>
-    <Grid fw:PointerTracker.Enabled="True">
+    <Grid>
         <ui:ScrollViewerEx>
             <StackPanel Margin="10">
                 <TextBlock Margin="0,10,0,5" Text="Microsoft Login" FontSize="15" FontWeight="SemiBold"/>

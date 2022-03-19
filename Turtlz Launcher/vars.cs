@@ -7,6 +7,7 @@ namespace Turtlz_Launcher
     public class vars
     {
         public static MSession session;
+        public static bool Offline;
         public static string UserName;
         public static string MegaLog;
         public static string DiscordToken = "";

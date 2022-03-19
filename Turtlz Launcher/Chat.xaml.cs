@@ -21,9 +21,8 @@ namespace Turtlz_Launcher
         {
 
             InitializeComponent();
-            
             timer.Start();
-            timerstate = true;
+            //timerstate = true;
         }
         string lastsource;
         private void ContentDialog_PrimaryButtonClick(ModernWpf.Controls.ContentDialog sender, ModernWpf.Controls.ContentDialogButtonClickEventArgs args)
@@ -34,7 +33,7 @@ namespace Turtlz_Launcher
             }
             this.Hide();
         }
-        bool timerstate = false;
+        //bool timerstate = false;
         //private void ContentDialog_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
         //{
         //    timer.Tick += Timer1_Tick;

@@ -33,7 +33,7 @@ namespace Turtlz_Launcher
     }
     public class IniFile   // revision 11
     {
-        string Path;
+        public string Path { get; set; }
         string EXE = Assembly.GetExecutingAssembly().GetName().Name;
 
         [DllImport("kernel32", CharSet = CharSet.Unicode)]

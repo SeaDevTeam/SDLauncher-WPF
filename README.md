@@ -1,6 +1,7 @@
 # SeaDev Launcher
 The source code of https://github.com/Chaniru22/SDLauncher/
 
+# This version is outdated.No longer maintained so please use the uwp verson
 <br>
 The idea of the creation by https://github.com/TurtlzYT
 <br>
@@ -13,7 +14,6 @@ The image is from version 3.5
 
 # Announcement 📢
 We changed our luancher name to SDLauncher from Emerald Launcher but the release name is still the same.
-# This version is outdated. so please use the uwp verson
 
 # Features
 - [x] Microsoft Login

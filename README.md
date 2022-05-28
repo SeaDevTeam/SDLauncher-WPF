@@ -1,7 +1,7 @@
 # SeaDev Launcher
 The source code of https://github.com/Chaniru22/SDLauncher/
 
-# This version is outdated.No longer maintained so please use the uwp verson
+# This version is outdated.No longer maintained. So please use the uwp verson
 <br>
 The idea of the creation by https://github.com/TurtlzYT
 <br>

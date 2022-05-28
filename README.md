@@ -13,7 +13,7 @@ The image is from version 3.5
 
 # Announcement 📢
 We changed our luancher name to SDLauncher from Emerald Launcher but the release name is still the same.
-
+# This version is outdated. so please use the uwp verson
 
 # Features
 - [x] Microsoft Login
